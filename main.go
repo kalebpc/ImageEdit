@@ -18,9 +18,8 @@ type Arguments struct {
 }
 
 type Imageedit struct {
-	img    image.Image
+	oldimg image.Image
 	newimg *image.NRGBA
-	pixels int
 }
 
 func main() {
@@ -31,13 +30,13 @@ func main() {
 			fmt.Println("Error opening infile")
 		} else {
 			defer file.Close()
-			var imageedit Imageedit = Imageedit{pixels: arguments.pixels}
-			imageedit.img, err = decodePng(file)
+			var imageedit Imageedit
+			imageedit.oldimg, err = decodePng(file)
 			if err != nil {
 				fmt.Println("Cannot decode file")
 			} else {
-				min := image.Point{imageedit.img.Bounds().Min.X, imageedit.img.Bounds().Min.Y}
-				max := image.Point{imageedit.img.Bounds().Max.X, imageedit.img.Bounds().Max.Y}
+				min := image.Point{imageedit.oldimg.Bounds().Min.X, imageedit.oldimg.Bounds().Min.Y}
+				max := image.Point{imageedit.oldimg.Bounds().Max.X, imageedit.oldimg.Bounds().Max.Y}
 				imageedit.newimg = image.NewNRGBA(image.Rectangle{min, max})
 
 				// Apply imageedit methods
@@ -50,13 +49,13 @@ func main() {
 					case "FXY":
 						imageedit.FXY()
 					case "RRX":
-						imageedit.RRX()
+						imageedit.RRX(arguments.pixels)
 					case "RRY":
-						imageedit.RRY()
+						imageedit.RRY(arguments.pixels)
 					case "RRR":
-						imageedit.RRR()
+						imageedit.RRR(arguments.pixels)
 					case "RRC":
-						imageedit.RRC()
+						imageedit.RRC(arguments.pixels)
 					}
 				}
 
@@ -215,113 +214,113 @@ func (arguments Arguments) validatefunctions(function string) bool {
 // Imageedit methods
 func (imageedit *Imageedit) FY() {
 	// flip imageedit.img over Y axis
-	for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
-		for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
-			k := imageedit.img.Bounds().Max.X - i - 1
-			imageedit.newimg.Set(i, j, imageedit.img.At(k, j))
+	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
+		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
+			k := imageedit.oldimg.Bounds().Max.X - i - 1
+			imageedit.newimg.Set(i, j, imageedit.oldimg.At(k, j))
 		}
 	}
 }
 
 func (imageedit *Imageedit) FX() {
 	// flip imageedit.img over X axis
-	for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
-		for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
-			k := imageedit.img.Bounds().Max.Y - j - 1
-			imageedit.newimg.Set(i, j, imageedit.img.At(i, k))
+	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
+		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
+			k := imageedit.oldimg.Bounds().Max.Y - j - 1
+			imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, k))
 		}
 	}
 }
 
 func (imageedit *Imageedit) FXY() {
 	// flip imageedit.img over both axis
-	for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
-		for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
-			k := imageedit.img.Bounds().Max.X - i - 1
-			l := imageedit.img.Bounds().Max.Y - j - 1
-			imageedit.newimg.Set(i, j, imageedit.img.At(k, l))
+	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
+		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
+			k := imageedit.oldimg.Bounds().Max.X - i - 1
+			l := imageedit.oldimg.Bounds().Max.Y - j - 1
+			imageedit.newimg.Set(i, j, imageedit.oldimg.At(k, l))
 		}
 	}
 }
 
-func (imageedit *Imageedit) RRY() {
+func (imageedit *Imageedit) RRY(pixels int) {
 	// round robin imageedit.img over Y axis
-	for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
-		for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
-			if i < imageedit.img.Bounds().Min.X+imageedit.pixels {
-				k := imageedit.img.Bounds().Max.X - imageedit.pixels + i - 1
-				imageedit.newimg.Set(i, j, imageedit.img.At(k, j))
+	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
+		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
+			if i < imageedit.oldimg.Bounds().Min.X+pixels {
+				k := imageedit.oldimg.Bounds().Max.X - pixels + i - 1
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(k, j))
 			} else {
-				imageedit.newimg.Set(i, j, imageedit.img.At(i-imageedit.pixels, j))
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(i-pixels, j))
 			}
 		}
 	}
 }
 
-func (imageedit *Imageedit) RRX() {
+func (imageedit *Imageedit) RRX(pixels int) {
 	// round robin imageedit.img over X axis
-	for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
-		for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
-			if j < imageedit.img.Bounds().Min.Y+imageedit.pixels {
-				l := imageedit.img.Bounds().Max.Y - imageedit.pixels + j - 1
-				imageedit.newimg.Set(i, j, imageedit.img.At(i, l))
+	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
+		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
+			if j < imageedit.oldimg.Bounds().Min.Y+pixels {
+				l := imageedit.oldimg.Bounds().Max.Y - pixels + j - 1
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, l))
 			} else {
-				imageedit.newimg.Set(i, j, imageedit.img.At(i, j-imageedit.pixels))
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j-pixels))
 			}
 		}
 	}
 }
 
-func (imageedit *Imageedit) RRR() {
+func (imageedit *Imageedit) RRR(pixels int) {
 	// round robin imageedit.img every other pixels size over x axis; rows
 	counter := 0
-	for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
+	for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
 		counter += 1
-		if counter <= imageedit.pixels {
-			for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
+		if counter <= pixels {
+			for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
 				// round robin over x axis
-				if i < imageedit.img.Bounds().Min.X+imageedit.pixels {
-					k := imageedit.img.Bounds().Max.X - imageedit.pixels + i - 1
-					imageedit.newimg.Set(i, j, imageedit.img.At(k, j))
+				if i < imageedit.oldimg.Bounds().Min.X+pixels {
+					k := imageedit.oldimg.Bounds().Max.X - pixels + i - 1
+					imageedit.newimg.Set(i, j, imageedit.oldimg.At(k, j))
 				} else {
-					imageedit.newimg.Set(i, j, imageedit.img.At(i-imageedit.pixels, j))
+					imageedit.newimg.Set(i, j, imageedit.oldimg.At(i-pixels, j))
 				}
 			}
-		} else if counter < imageedit.pixels+imageedit.pixels {
-			for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
-				imageedit.newimg.Set(i, j, imageedit.img.At(i, j))
+		} else if counter < pixels*2 {
+			for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
 			}
 		} else {
-			for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
-				imageedit.newimg.Set(i, j, imageedit.img.At(i, j))
+			for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
 			}
 			counter = 0
 		}
 	}
 }
 
-func (imageedit *Imageedit) RRC() {
+func (imageedit *Imageedit) RRC(pixels int) {
 	// round robin imageedit.img every other pixels size over y axis; columns
 	counter := 0
-	for i := imageedit.img.Bounds().Min.X; i < imageedit.img.Bounds().Max.X; i += 1 {
+	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
 		counter += 1
-		if counter < imageedit.pixels {
-			for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
+		if counter < pixels {
+			for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
 				// round robin over y axis
-				if j < imageedit.img.Bounds().Min.Y+imageedit.pixels {
-					l := imageedit.img.Bounds().Max.Y - imageedit.pixels + j - 1
-					imageedit.newimg.Set(i, j, imageedit.img.At(i, l))
+				if j < imageedit.oldimg.Bounds().Min.Y+pixels {
+					l := imageedit.oldimg.Bounds().Max.Y - pixels + j - 1
+					imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, l))
 				} else {
-					imageedit.newimg.Set(i, j, imageedit.img.At(i, j-imageedit.pixels))
+					imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j-pixels))
 				}
 			}
-		} else if counter < imageedit.pixels+imageedit.pixels {
-			for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
-				imageedit.newimg.Set(i, j, imageedit.img.At(i, j))
+		} else if counter < pixels*2 {
+			for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
 			}
 		} else {
-			for j := imageedit.img.Bounds().Min.Y; j < imageedit.img.Bounds().Max.Y; j += 1 {
-				imageedit.newimg.Set(i, j, imageedit.img.At(i, j))
+			for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
+				imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
 			}
 			counter = 0
 		}
