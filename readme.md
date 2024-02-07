@@ -42,37 +42,33 @@ Example:
 
   ![dinoFX]
 
-
 - Flip up down
 
-  ![dino]
   ![dinoFY]
 
 - rotate
 
-  ![dino]
   ![dinoFXY]
 
 - Round robin left right 200px
 
-  ![dino]
   ![dinoRRX]
 
 - Round robin image top down 100px
 
-  ![dino]
   ![dinoRRY]
-
 
 - Round robin 33px columns
 
-  ![dino]
   ![dinoRRYcolumns]
 
 - Round robin 33px rows
 
-  ![dino]
   ![dinoRRR]
+
+- Pixelate 66px
+
+  ![dinoPIX]
 
 ---
 ### Usage examples
@@ -88,7 +84,7 @@ C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./p
 |-|-|
 | *infile | `./forward/path/to/file` |
 | *outfile | `../../backward/path/to/file` |
-| functions| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC`|
+| functions| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC` `PIX`|
 | **pixels | `33`|
 ---
 **requires exact file path relative to ImageEdit folder or .exe location*
@@ -103,3 +99,4 @@ C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./p
 [dinoRRR]:./assets/roundrobin/dinoRRR.png
 [dinoRRYcolumns]:./assets/roundrobin/dinoRRC.png
 [dinoFXY]:./assets/flip/dinoFXY.png
+[dinoPIX]:./assets/pixelate/dinoPIX.png
