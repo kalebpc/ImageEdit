@@ -61,6 +61,8 @@ func main() {
 					err = png.Encode(newfile, imageedit.Newimg)
 					if err != nil {
 						fmt.Println("Error Encoding new image")
+					} else {
+						fmt.Println("New Image Created!")
 					}
 				}
 			}
