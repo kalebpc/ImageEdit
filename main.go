@@ -11,10 +11,10 @@ import (
 )
 
 type Arguments struct {
-	infile    string
-	outfile   string
-	functions []string
-	pixels    int
+	infile   string
+	outfile  string
+	function string
+	pixels   int
 }
 
 type Imageedit struct {
@@ -39,34 +39,32 @@ func main() {
 				max := image.Point{imageedit.oldimg.Bounds().Max.X, imageedit.oldimg.Bounds().Max.Y}
 				imageedit.newimg = image.NewNRGBA(image.Rectangle{min, max})
 
-				// Apply imageedit methods
-				for i := 0; i < len(arguments.functions); i += 1 {
-					switch function := arguments.functions[i]; function {
-					case "FX":
-						// flip over x-axis
-						imageedit.FX()
-					case "FY":
-						// flip over y-axis
-						imageedit.FY()
-					case "FXY":
-						// rotate
-						imageedit.FXY()
-					case "RRX":
-						// roundrobin around x-axis
-						imageedit.RRX(arguments.pixels)
-					case "RRY":
-						// roundrobin around y-axis
-						imageedit.RRY(arguments.pixels)
-					case "RRR":
-						// roundrobin `pixels` size rows
-						imageedit.RRR(arguments.pixels)
-					case "RRC":
-						// roundrobin `pixels` size columns
-						imageedit.RRC(arguments.pixels)
-					case "PIX":
-						// `pixels` size pixelate whole image
-						imageedit.PIX(arguments.pixels)
-					}
+				// Apply imageedit method
+				switch arguments.function {
+				case "FX":
+					// flip over x-axis
+					imageedit.FX()
+				case "FY":
+					// flip over y-axis
+					imageedit.FY()
+				case "FXY":
+					// rotate
+					imageedit.FXY()
+				case "RRX":
+					// roundrobin around x-axis
+					imageedit.RRX(arguments.pixels)
+				case "RRY":
+					// roundrobin around y-axis
+					imageedit.RRY(arguments.pixels)
+				case "RRR":
+					// roundrobin `pixels` size rows
+					imageedit.RRR(arguments.pixels)
+				case "RRC":
+					// roundrobin `pixels` size columns
+					imageedit.RRC(arguments.pixels)
+				case "PIX":
+					// `pixels` size pixelate whole image
+					imageedit.PIX(arguments.pixels)
 				}
 				// create new file
 				newfile, err := os.Create(arguments.outfile)
@@ -97,7 +95,7 @@ func getArguments() (arguments Arguments, exit bool) {
 	// Inspect os.Args
 	for _, arg := range os.Args[1:] {
 		if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") || strings.Contains(arg, "help") {
-			fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] functions=[FX | FY | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      functions   : name of edit functions\n                    [FX]   [FY]   [RRC]\n                    [FXY]  [RRY]  [PIX]\n                    [RRX]  [RRR]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png functions=RRR pixels=50")
+			fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[FX | FY | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      function   : name of edit function\n                    [FX]   [FY]   [RRC]\n                    [FXY]  [RRY]  [PIX]\n                    [RRX]  [RRR]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50")
 			exit = true
 		}
 		arg := strings.Split(arg, "=")
@@ -114,13 +112,10 @@ func getArguments() (arguments Arguments, exit bool) {
 					exit = true
 				}
 			}
-			if strings.Contains(arg[0], "functions") {
+			if strings.Contains(arg[0], "function") {
 				if arg[1] != "" {
-					funcin := strings.Split(arg[1], "-")
-					for i := 0; i < len(funcin); i += 1 {
-						if arguments.validatefunctions(funcin[i]) {
-							arguments.functions = append(arguments.functions, funcin[i])
-						}
+					if arguments.validatefunction(arg[1]) {
+						arguments.function = arg[1]
 					}
 				} else {
 					exit = true
@@ -142,7 +137,7 @@ func getArguments() (arguments Arguments, exit bool) {
 			exit = true
 		}
 	}
-	if len(arguments.functions) < 1 || len(arguments.infile) < 1 || len(arguments.outfile) < 1 {
+	if len(arguments.function) < 1 || len(arguments.infile) < 1 || len(arguments.outfile) < 1 {
 		exit = true
 	}
 	return arguments, exit
@@ -183,7 +178,7 @@ func (arguments Arguments) validateOutfile() bool {
 	return result
 }
 
-func (arguments Arguments) validatefunctions(function string) bool {
+func (arguments Arguments) validatefunction(function string) bool {
 	result := true
 	validarguments := []string{"FX", "FY", "FXY", "RRX", "RRY", "RRR", "RRC", "PIX"}
 	counter := len(validarguments)

@@ -21,12 +21,12 @@ C:\path\to\ImageEditfolder> ./ImageEdit infile=./file/path outfile=./newfile/pat
 C:\path\to\ImageEditfolder> go build
 C:\path\to\ImageEditfolder> ./ImageEdit --help
 Usage:
-      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] functions=[FX | FY | ...] pixels=[int]
+      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[FX | FY | ...] pixels=[int]
 
 Arguments:
       infile      : path to photo to edit
       outfile     : path to save new edited photo
-      functions    : name of edit functions
+      function    : name of edit function
                     [FX]   [FY]   [RRC]
                     [FXY]  [RRY]
                     [RRX]  [RRR]
@@ -34,10 +34,10 @@ Arguments:
       help        : print usage instructions
 
 Example:
-      C:\path\to\ImageEditfolder> ImageEdit infile=./filetoedit.png outfile=./newfilename.png functions=RRR pixels=50
+      C:\path\to\ImageEditfolder> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50
 ~~~
 ---
-### Image Functions
+### Image Function Examples
 
   ![dino]
 
@@ -76,18 +76,18 @@ Example:
 ---
 ### Usage examples
 ~~~
-C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png functions=FX
+C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=FX
 
-C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png functions=RRR pixels=33
+C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=RRR pixels=33
   
-  * `pixels` not required for flip functions *
+  * `pixels` not required for flip function *
 ~~~
 ### Arguments
 | Key | Example Value |
 |-|-|
 | *infile | `./forward/path/to/file` |
 | *outfile | `../../backward/path/to/file` |
-| functions| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC` `PIX`|
+| function| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC` `PIX`|
 | **pixels | `33`|
 ---
 **requires exact file path relative to ImageEdit folder or .exe location*
