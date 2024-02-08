@@ -126,9 +126,9 @@ func (arguments Arguments) validateOutfile() bool {
 	if strings.Compare(outExt, ".png") != 0 {
 		result = false
 	}
-	if !strings.Contains(arguments.Outfile, "/") {
-		result = false
-	}
+	// if !strings.Contains(arguments.Outfile, "/") {
+	// 	result = false
+	// }
 	return result
 }
 
