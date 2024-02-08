@@ -31,7 +31,7 @@ func GetArgs() (arguments Arguments, exit bool) {
 			arguments.Outfile = currentdir + arguments.Outfile
 			fmt.Printf("%s", "Enter name of function to run: ")
 			num, err := fmt.Scanf("%s\n", &arguments.Function)
-			if num > 1 || err != nil || !arguments.validatefunction(arguments.Function) || arguments.Function == "exit" {
+			if num > 1 || err != nil || !arguments.validatefunction(arguments.Function) || !arguments.validateOutfile() || !arguments.validateInfile() {
 				exit = true
 			} else {
 				fmt.Printf("%s", "Enter number of pixels: ")
