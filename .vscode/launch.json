@@ -13,8 +13,8 @@
       "args": [
         "infile=./assets/dino.png",
         "outfile=./dino.png",
-        "functions=FX-FY-FXY-RRX-RRY-RRR-RRC",
-        "pixels=5"
+        "functions=PIX",
+        "pixels=3"
       ]
     }
 

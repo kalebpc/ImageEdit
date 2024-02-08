@@ -336,18 +336,34 @@ func (imageedit *Imageedit) RRC(pixels int) {
 }
 
 func (imageedit *Imageedit) PIX(pixels int) {
-	pixelswide := divint(imageedit.oldimg.Bounds().Max.X, pixels)
-	pixelshigh := divint(imageedit.oldimg.Bounds().Max.Y, pixels)
-	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X-1; i += pixelswide {
-		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y-1; j += pixelshigh {
-			for k := i; k < i+pixelswide; k += 1 {
-				for l := j; l < j+pixelshigh; l += 1 {
-					imageedit.newimg.Set(k, l, imageedit.oldimg.At(i+(pixelswide/2), j+(pixelshigh/2)))
+	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X; i += pixels {
+		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y; j += pixels {
+			for k := i; k < i+pixels; k += 1 {
+				for l := j; l < j+pixels; l += 1 {
+					if i < imageedit.newimg.Bounds().Max.X-divint(pixels, 2) && j < imageedit.newimg.Bounds().Max.Y-divint(pixels, 2) {
+						imageedit.newimg.Set(k, l, imageedit.oldimg.At(i+(divint(pixels, 2)), j+divint(pixels, 2)))
+					} else {
+						imageedit.newimg.Set(k, l, imageedit.oldimg.At(imageedit.newimg.Bounds().Max.X, imageedit.newimg.Bounds().Max.Y))
+					}
 				}
 			}
 		}
 	}
 }
+
+// func (imageedit *Imageedit) PIX(pixels int) {
+// 	pixelswide := divint(imageedit.oldimg.Bounds().Max.X, pixels)
+// 	pixelshigh := divint(imageedit.oldimg.Bounds().Max.Y, pixels)
+// 	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X-1; i += pixelswide {
+// 		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y-1; j += pixelshigh {
+// 			for k := i; k < i+pixelswide; k += 1 {
+// 				for l := j; l < j+pixelshigh; l += 1 {
+// 					imageedit.newimg.Set(k, l, imageedit.oldimg.At(i+(pixelswide/2), j+(pixelshigh/2)))
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
 // func (imageedit Imageedit) INV() {
 // 	// average rgb values together at every pixel
