@@ -7,7 +7,69 @@
 ### Going Forward
 - More image functions
 ---
-### Current User Interface
+# Cli User Interface: no args
+Build the ImageEdit.exe binary
+~~~
+C:\path\to\ImageEditfolder> go build
+~~~
+Run ImageEdit
+~~~
+C:\path\to\ImageEditfolder> ./ImageEdit
+~~~
+File picker will open folder to /%USERPROFILE%/pictures
+
+NOTE: if pictures folder is not in this path, change path in `ui.go` file
+~~~
+Pick a file:
+
+> drwxrwxrwx      foo.png
+> drwxrwxrwx      bar.png
+~~~
+Use arrows to highlight image file
+
+Hit `enter`
+
+Hit `q`
+
+Type filename with extension
+
+~~~
+  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
+
+Enter name of Outfile:          fooPIX.png
+~~~
+Hit `enter`
+
+Type name of function
+~~~
+  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
+
+Enter name of Outfile:          fooPIX.png
+Enter name of function to run:  PIX
+~~~
+Hit `enter`
+
+Type number of pixels
+~~~
+  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
+
+Enter name of Outfile:          fooPIX.png
+Enter name of function to run:  PIX
+Enter number of pixels:         15
+~~~
+Hit `enter`
+~~~
+  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
+
+Enter name of Outfile:          fooPIX.png
+Enter name of function to run:  PIX
+Enter number of pixels:         15
+New Image Created!
+~~~
+Look in %USERPROFILE%\pictures folder to find newly pixelated 'fooPIX.png' image
+
+---
+# Cli User Interface: passing args
 - Run in cmd line with required arguments
 ~~~
 C:\path\to\ImageEditfolder> go run main.go infile=./file/path outfile=./newfile/path ...
@@ -37,7 +99,27 @@ Example:
       C:\path\to\ImageEditfolder> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50
 ~~~
 ---
-### Image Function Examples
+### Arguments
+| Key | Example Value |
+|-|-|
+| *infile | `./forward/path/to/file` |
+| *outfile | `../../backward/path/to/file` |
+| function| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC` `PIX`|
+| **pixels | `33`|
+---
+**requires exact file path relative to ImageEdit folder or .exe location*
+
+***requires integer*
+### Usage examples
+~~~
+C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=FX
+
+C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=RRR pixels=33
+  
+  * `pixels` not required for flip function *
+~~~
+---
+# Function Examples
 
   ![dino]
 
@@ -74,25 +156,6 @@ Example:
   ![dinoPIX]
 
 ---
-### Usage examples
-~~~
-C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=FX
-
-C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=RRR pixels=33
-  
-  * `pixels` not required for flip function *
-~~~
-### Arguments
-| Key | Example Value |
-|-|-|
-| *infile | `./forward/path/to/file` |
-| *outfile | `../../backward/path/to/file` |
-| function| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC` `PIX`|
-| **pixels | `33`|
----
-**requires exact file path relative to ImageEdit folder or .exe location*
-
-***requires integer*
 
 [dino]:./assets/dino.png
 [dinoFX]:./assets/flip/dinoFX.png
