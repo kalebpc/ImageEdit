@@ -160,14 +160,6 @@ func userInput() (arguments Arguments, exit bool) {
 	return arguments, exit
 }
 
-func divint(n int, d int) int {
-	result := int(float32(n/d) + .5)
-	if result < 1 {
-		result = 1
-	}
-	return result
-}
-
 // Arguments methods
 func (arguments Arguments) validateInfile() bool {
 	result := true
@@ -338,118 +330,12 @@ func (imageedit *Imageedit) RRC(pixels int) {
 func (imageedit *Imageedit) PIX(pixels int) {
 	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X; i += pixels {
 		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y; j += pixels {
+			sample := imageedit.oldimg.At(i, j)
 			for k := i; k < i+pixels; k += 1 {
 				for l := j; l < j+pixels; l += 1 {
-					if i < imageedit.newimg.Bounds().Max.X-divint(pixels, 2) && j < imageedit.newimg.Bounds().Max.Y-divint(pixels, 2) {
-						imageedit.newimg.Set(k, l, imageedit.oldimg.At(i+(divint(pixels, 2)), j+divint(pixels, 2)))
-					} else {
-						imageedit.newimg.Set(k, l, imageedit.oldimg.At(imageedit.newimg.Bounds().Max.X, imageedit.newimg.Bounds().Max.Y))
-					}
+					imageedit.newimg.Set(k, l, sample)
 				}
 			}
 		}
 	}
 }
-
-// func (imageedit *Imageedit) PIX(pixels int) {
-// 	pixelswide := divint(imageedit.oldimg.Bounds().Max.X, pixels)
-// 	pixelshigh := divint(imageedit.oldimg.Bounds().Max.Y, pixels)
-// 	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X-1; i += pixelswide {
-// 		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y-1; j += pixelshigh {
-// 			for k := i; k < i+pixelswide; k += 1 {
-// 				for l := j; l < j+pixelshigh; l += 1 {
-// 					imageedit.newimg.Set(k, l, imageedit.oldimg.At(i+(pixelswide/2), j+(pixelshigh/2)))
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
-// func (imageedit Imageedit) INV() {
-// 	// average rgb values together at every pixel
-// 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
-// 		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
-// 			imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
-// 			// color.RGBA64At returns (r, g, b, a uint32)
-// 			color64 := imageedit.newimg.RGBA64At(i, j)
-// 			color64.R = (color64.R + color64.G + color64.B) / 3
-// 			color64.G = (color64.R + color64.G + color64.B) / 3
-// 			color64.B = (color64.R + color64.G + color64.B) / 3
-// 			imageedit.newimg.SetRGBA64(i, j, color64)
-// 		}
-// 	}
-// }
-
-// func (imageedit Imageedit) INA() {
-// 	//
-// 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
-// 		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
-// 			imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
-// 			color64 := imageedit.newimg.RGBA64At(i, j)
-// 			// left col
-// 			if i == imageedit.oldimg.Bounds().Min.X {
-// 				// top row; down,right
-// 				if j == imageedit.oldimg.Bounds().Min.Y {
-// 					color64.R = (imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i+1, j).R + imageedit.newimg.RGBA64At(i, j+1).R + imageedit.newimg.RGBA64At(i+1, j+1).R) / 4
-// 					color64.G = (imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i+1, j).G + imageedit.newimg.RGBA64At(i, j+1).G + imageedit.newimg.RGBA64At(i+1, j+1).G) / 4
-// 					color64.B = (imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i+1, j).B + imageedit.newimg.RGBA64At(i, j+1).B + imageedit.newimg.RGBA64At(i+1, j+1).B) / 4
-// 				}
-// 				// center; up,down,right
-// 				if j > imageedit.oldimg.Bounds().Min.Y && j < imageedit.oldimg.Bounds().Max.Y-1 {
-// 					color64.R = (imageedit.newimg.RGBA64At(i, j-1).R + imageedit.newimg.RGBA64At(i+1, j-1).R + imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i+1, j).R + imageedit.newimg.RGBA64At(i, j+1).R + imageedit.newimg.RGBA64At(i+1, j+1).R) / 6
-// 					color64.G = (imageedit.newimg.RGBA64At(i, j-1).G + imageedit.newimg.RGBA64At(i+1, j-1).G + imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i+1, j).G + imageedit.newimg.RGBA64At(i, j+1).G + imageedit.newimg.RGBA64At(i+1, j+1).G) / 6
-// 					color64.B = (imageedit.newimg.RGBA64At(i, j-1).B + imageedit.newimg.RGBA64At(i+1, j-1).B + imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i+1, j).B + imageedit.newimg.RGBA64At(i, j+1).B + imageedit.newimg.RGBA64At(i+1, j+1).B) / 6
-// 				}
-// 				// bottom row; up,right
-// 				if j == imageedit.oldimg.Bounds().Max.Y-1 {
-// 					color64.R = (imageedit.newimg.RGBA64At(i, j-1).R + imageedit.newimg.RGBA64At(i+1, j-1).R + imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i+1, j).R) / 4
-// 					color64.G = (imageedit.newimg.RGBA64At(i, j-1).G + imageedit.newimg.RGBA64At(i+1, j-1).G + imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i+1, j).G) / 4
-// 					color64.B = (imageedit.newimg.RGBA64At(i, j-1).B + imageedit.newimg.RGBA64At(i+1, j-1).B + imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i+1, j).B) / 4
-// 				}
-// 			}
-// 			// right col
-// 			if i == imageedit.oldimg.Bounds().Max.X-1 {
-// 				// top row; down,left
-// 				if j == imageedit.oldimg.Bounds().Min.Y {
-// 					color64.R = (imageedit.newimg.RGBA64At(i-1, j).R + imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i-1, j+1).R + imageedit.newimg.RGBA64At(i, j+1).R) / 4
-// 					color64.G = (imageedit.newimg.RGBA64At(i-1, j).G + imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i-1, j+1).G + imageedit.newimg.RGBA64At(i, j+1).G) / 4
-// 					color64.B = (imageedit.newimg.RGBA64At(i-1, j).B + imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i-1, j+1).B + imageedit.newimg.RGBA64At(i, j+1).B) / 4
-// 				}
-// 				// center; up,down,left
-// 				if j > imageedit.oldimg.Bounds().Min.Y && j < imageedit.oldimg.Bounds().Max.Y-1 {
-// 					color64.R = (imageedit.newimg.RGBA64At(i-1, j-1).R + imageedit.newimg.RGBA64At(i, j-1).R + imageedit.newimg.RGBA64At(i-1, j).R + imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i-1, j+1).R + imageedit.newimg.RGBA64At(i, j+1).R) / 6
-// 					color64.G = (imageedit.newimg.RGBA64At(i-1, j-1).G + imageedit.newimg.RGBA64At(i, j-1).G + imageedit.newimg.RGBA64At(i-1, j).G + imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i-1, j+1).G + imageedit.newimg.RGBA64At(i, j+1).G) / 6
-// 					color64.B = (imageedit.newimg.RGBA64At(i-1, j-1).B + imageedit.newimg.RGBA64At(i, j-1).B + imageedit.newimg.RGBA64At(i-1, j).B + imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i-1, j+1).B + imageedit.newimg.RGBA64At(i, j+1).B) / 6
-// 				}
-// 				// bottom row; up,left
-// 				if j == imageedit.oldimg.Bounds().Max.Y-1 {
-// 					color64.R = (imageedit.newimg.RGBA64At(i-1, j-1).R + imageedit.newimg.RGBA64At(i, j-1).R + imageedit.newimg.RGBA64At(i-1, j).R + imageedit.newimg.RGBA64At(i, j).R) / 4
-// 					color64.G = (imageedit.newimg.RGBA64At(i-1, j-1).G + imageedit.newimg.RGBA64At(i, j-1).G + imageedit.newimg.RGBA64At(i-1, j).G + imageedit.newimg.RGBA64At(i, j).G) / 4
-// 					color64.B = (imageedit.newimg.RGBA64At(i-1, j-1).B + imageedit.newimg.RGBA64At(i, j-1).B + imageedit.newimg.RGBA64At(i-1, j).B + imageedit.newimg.RGBA64At(i, j).B) / 4
-// 				}
-// 			}
-// 			// center
-// 			if i > imageedit.oldimg.Bounds().Min.X && i < imageedit.oldimg.Bounds().Max.X-1 {
-// 				// top row; down,left,right
-// 				if j == imageedit.oldimg.Bounds().Min.Y {
-// 					color64.R = (imageedit.newimg.RGBA64At(i-1, j).R + imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i+1, j).R + imageedit.newimg.RGBA64At(i-1, j+1).R + imageedit.newimg.RGBA64At(i, j+1).R + imageedit.newimg.RGBA64At(i+1, j+1).R) / 6
-// 					color64.G = (imageedit.newimg.RGBA64At(i-1, j).G + imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i+1, j).G + imageedit.newimg.RGBA64At(i-1, j+1).G + imageedit.newimg.RGBA64At(i, j+1).G + imageedit.newimg.RGBA64At(i+1, j+1).G) / 6
-// 					color64.B = (imageedit.newimg.RGBA64At(i-1, j).B + imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i+1, j).B + imageedit.newimg.RGBA64At(i-1, j+1).B + imageedit.newimg.RGBA64At(i, j+1).B + imageedit.newimg.RGBA64At(i+1, j+1).B) / 6
-// 				}
-// 				// center; up,down,left,right
-// 				if j > imageedit.oldimg.Bounds().Min.Y && j < imageedit.oldimg.Bounds().Max.Y-1 {
-// 					color64.R = (imageedit.newimg.RGBA64At(i-1, j-1).R + imageedit.newimg.RGBA64At(i, j-1).R + imageedit.newimg.RGBA64At(i+1, j-1).R + imageedit.newimg.RGBA64At(i-1, j).R + imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i+1, j).R + imageedit.newimg.RGBA64At(i-1, j+1).R + imageedit.newimg.RGBA64At(i, j+1).R + imageedit.newimg.RGBA64At(i+1, j+1).R) / 9
-// 					color64.G = (imageedit.newimg.RGBA64At(i-1, j-1).G + imageedit.newimg.RGBA64At(i, j-1).G + imageedit.newimg.RGBA64At(i+1, j-1).G + imageedit.newimg.RGBA64At(i-1, j).G + imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i+1, j).G + imageedit.newimg.RGBA64At(i-1, j+1).G + imageedit.newimg.RGBA64At(i, j+1).G + imageedit.newimg.RGBA64At(i+1, j+1).G) / 9
-// 					color64.B = (imageedit.newimg.RGBA64At(i-1, j-1).B + imageedit.newimg.RGBA64At(i, j-1).B + imageedit.newimg.RGBA64At(i+1, j-1).B + imageedit.newimg.RGBA64At(i-1, j).B + imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i+1, j).B + imageedit.newimg.RGBA64At(i-1, j+1).B + imageedit.newimg.RGBA64At(i, j+1).B + imageedit.newimg.RGBA64At(i+1, j+1).B) / 9
-// 				}
-// 				// bottom row; up,left,right
-// 				if j == imageedit.oldimg.Bounds().Max.Y-1 {
-// 					color64.R = (imageedit.newimg.RGBA64At(i-1, j-1).R + imageedit.newimg.RGBA64At(i, j-1).R + imageedit.newimg.RGBA64At(i+1, j-1).R + imageedit.newimg.RGBA64At(i-1, j).R + imageedit.newimg.RGBA64At(i, j).R + imageedit.newimg.RGBA64At(i+1, j).R) / 6
-// 					color64.G = (imageedit.newimg.RGBA64At(i-1, j-1).G + imageedit.newimg.RGBA64At(i, j-1).G + imageedit.newimg.RGBA64At(i+1, j-1).G + imageedit.newimg.RGBA64At(i-1, j).G + imageedit.newimg.RGBA64At(i, j).G + imageedit.newimg.RGBA64At(i+1, j).G) / 6
-// 					color64.B = (imageedit.newimg.RGBA64At(i-1, j-1).B + imageedit.newimg.RGBA64At(i, j-1).B + imageedit.newimg.RGBA64At(i+1, j-1).B + imageedit.newimg.RGBA64At(i-1, j).B + imageedit.newimg.RGBA64At(i, j).B + imageedit.newimg.RGBA64At(i+1, j).B) / 6
-// 				}
-// 			}
-// 			imageedit.newimg.SetRGBA64(i, j, color64)
-// 		}
-// 	}
-// }
