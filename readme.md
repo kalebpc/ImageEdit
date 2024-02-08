@@ -66,7 +66,7 @@ Example:
 
   ![dinoRRR]
 
-- Pixelate 66px
+- Pixelate 13px
 
   ![dinoPIX]
 
