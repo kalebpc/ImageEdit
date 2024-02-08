@@ -1,5 +1,6 @@
-# ![Go logo](https://go.dev/images/go-logo-blue.svg) ImageEdit
+![Go logo](https://go.dev/images/go-logo-blue.svg)
 
+# ImageEdit package
 
 ![Build Report Card](https://img.shields.io/badge/Build-passing-brightgreen)
 ### Going Forward
