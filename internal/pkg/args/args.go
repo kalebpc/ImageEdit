@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/kalebpc/ImageEdit/pkg/ui"
 )
 
 type Arguments struct {
@@ -18,55 +20,77 @@ type Arguments struct {
 func GetArgs() (arguments Arguments, exit bool) {
 	// No arguments or too many: Print Usage instructions
 	exit = false
-	if len(os.Args[1:]) <= 0 || len(os.Args[1:]) > 5 {
-		fmt.Println("ImageEdit --help for usage instructions")
-		exit = true
-	}
-	// Inspect os.Args
-	for _, arg := range os.Args[1:] {
-		if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") || strings.Contains(arg, "help") {
-			fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[FX | FY | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      function   : name of edit function\n                    [FX]   [FY]   [RRC]\n                    [FXY]  [RRY]  [PIX]\n                    [RRX]  [RRR]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50")
+	if len(os.Args[1:]) <= 0 {
+		arguments.Infile = ui.StartUi()
+		currentdir, _ := filepath.Split(arguments.Infile)
+		fmt.Printf("%s", "Enter name of Outfile: ")
+		num, err := fmt.Scanf("%s\n", &arguments.Outfile)
+		if num < 1 || num > 1 || err != nil {
 			exit = true
-		}
-		arg := strings.Split(arg, "=")
-		if len(arg) > 1 {
-			if strings.Contains(arg[0], "infile") {
-				arguments.Infile = arg[1]
-				if !arguments.validateInfile() {
-					exit = true
-				}
-			}
-			if strings.Contains(arg[0], "outfile") {
-				arguments.Outfile = arg[1]
-				if !arguments.validateOutfile() {
-					exit = true
-				}
-			}
-			if strings.Contains(arg[0], "function") {
-				if arg[1] != "" {
-					if arguments.validatefunction(arg[1]) {
-						arguments.Function = arg[1]
-					}
-				} else {
-					exit = true
-				}
-			}
-			if strings.Contains(arg[0], "pixels") {
-				temp, err := strconv.Atoi(arg[1])
-				if err != nil {
-					arguments.Pixels = 0
-				} else {
-					if temp > 0 {
-						arguments.Pixels = temp
-					} else {
-						arguments.Pixels = 0
-					}
-				}
-			}
 		} else {
-			exit = true
+			arguments.Outfile = currentdir + arguments.Outfile
+			fmt.Printf("%s", "Enter name of function to run: ")
+			num, err := fmt.Scanf("%s\n", &arguments.Function)
+			if num < 1 || num > 1 || !arguments.validatefunction(arguments.Function) || err != nil {
+				exit = true
+			} else {
+				fmt.Printf("%s", "Enter number of pixels: ")
+				num, err := fmt.Scanf("%d\n", &arguments.Pixels)
+				if err != nil {
+					exit = true
+				} else if num < 1 || num > 1 {
+					arguments.Pixels = 0
+				}
+			}
+		}
+	} else {
+		// Inspect os.Args
+		for _, arg := range os.Args[1:] {
+			if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") || strings.Contains(arg, "help") {
+				fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[FX | FY | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      function   : name of edit function\n                    [FX]   [FY]   [RRC]\n                    [FXY]  [RRY]  [PIX]\n                    [RRX]  [RRR]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50")
+				exit = true
+			}
+			arg := strings.Split(arg, "=")
+			if len(arg) > 1 {
+				if strings.Contains(arg[0], "infile") {
+					arguments.Infile = arg[1]
+					if !arguments.validateInfile() {
+						exit = true
+					}
+				}
+				if strings.Contains(arg[0], "outfile") {
+					arguments.Outfile = arg[1]
+					if !arguments.validateOutfile() {
+						exit = true
+					}
+				}
+				if strings.Contains(arg[0], "function") {
+					if arg[1] != "" {
+						if arguments.validatefunction(arg[1]) {
+							arguments.Function = arg[1]
+						}
+					} else {
+						exit = true
+					}
+				}
+				if strings.Contains(arg[0], "pixels") {
+					temp, err := strconv.Atoi(arg[1])
+					if err != nil {
+						arguments.Pixels = 0
+					} else {
+						if temp > 0 {
+							arguments.Pixels = temp
+						} else {
+							arguments.Pixels = 0
+						}
+					}
+				}
+			} else {
+				exit = true
+			}
 		}
 	}
+
 	if len(arguments.Function) < 1 || len(arguments.Infile) < 1 || len(arguments.Outfile) < 1 {
 		exit = true
 	}
