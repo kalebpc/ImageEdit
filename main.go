@@ -23,15 +23,15 @@ type Imageedit struct {
 }
 
 func main() {
-	arguments, exit := userInput()
+	arguments, exit := getArguments()
 	for !exit {
-		file, err := openPng(arguments.infile)
+		file, err := os.Open(arguments.infile)
 		if err != nil {
 			fmt.Println("Error opening infile")
 		} else {
 			defer file.Close()
 			var imageedit Imageedit
-			imageedit.oldimg, err = decodePng(file)
+			imageedit.oldimg, err = png.Decode(file)
 			if err != nil {
 				fmt.Println("Cannot decode file")
 			} else {
@@ -43,31 +43,39 @@ func main() {
 				for i := 0; i < len(arguments.functions); i += 1 {
 					switch function := arguments.functions[i]; function {
 					case "FX":
+						// flip over x-axis
 						imageedit.FX()
 					case "FY":
+						// flip over y-axis
 						imageedit.FY()
 					case "FXY":
+						// rotate
 						imageedit.FXY()
 					case "RRX":
+						// roundrobin around x-axis
 						imageedit.RRX(arguments.pixels)
 					case "RRY":
+						// roundrobin around y-axis
 						imageedit.RRY(arguments.pixels)
 					case "RRR":
+						// roundrobin `pixels` size rows
 						imageedit.RRR(arguments.pixels)
 					case "RRC":
+						// roundrobin `pixels` size columns
 						imageedit.RRC(arguments.pixels)
 					case "PIX":
+						// `pixels` size pixelate whole image
 						imageedit.PIX(arguments.pixels)
 					}
 				}
 				// create new file
-				newfile, err := newImageFile(arguments.outfile)
+				newfile, err := os.Create(arguments.outfile)
 				if err != nil {
 					fmt.Println("Error Creating new outfile")
 				} else {
 					defer newfile.Close()
 					// encode new file
-					err = encodePng(newfile, imageedit.newimg)
+					err = png.Encode(newfile, imageedit.newimg)
 					if err != nil {
 						fmt.Println("Error Encoding new image")
 					}
@@ -79,27 +87,7 @@ func main() {
 	os.Exit(0)
 }
 
-func openPng(Filein string) (file *os.File, err error) {
-	file, err = os.Open(Filein)
-	return file, err
-}
-
-func decodePng(file *os.File) (img image.Image, err error) {
-	img, err = png.Decode(file)
-	return img, err
-}
-
-func newImageFile(Fileout string) (newfile *os.File, err error) {
-	newfile, err = os.Create(Fileout)
-	return newfile, err
-}
-
-func encodePng(newfile *os.File, newimg *image.NRGBA) (err error) {
-	err = png.Encode(newfile, newimg)
-	return err
-}
-
-func userInput() (arguments Arguments, exit bool) {
+func getArguments() (arguments Arguments, exit bool) {
 	// No arguments or too many: Print Usage instructions
 	exit = false
 	if len(os.Args[1:]) <= 0 || len(os.Args[1:]) > 5 {
@@ -160,7 +148,6 @@ func userInput() (arguments Arguments, exit bool) {
 	return arguments, exit
 }
 
-// Arguments methods
 func (arguments Arguments) validateInfile() bool {
 	result := true
 	_, err := filepath.EvalSymlinks(arguments.infile)
@@ -211,7 +198,6 @@ func (arguments Arguments) validatefunctions(function string) bool {
 	return result
 }
 
-// Imageedit methods
 func (imageedit *Imageedit) FY() {
 	// flip imageedit.img over Y axis
 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
