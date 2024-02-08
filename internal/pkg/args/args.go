@@ -18,27 +18,27 @@ type Arguments struct {
 }
 
 func GetArgs() (arguments Arguments, exit bool) {
-	// No arguments or too many: Print Usage instructions
 	exit = false
 	if len(os.Args[1:]) <= 0 {
+		// Start cl ui
 		arguments.Infile = ui.StartUi()
 		currentdir, _ := filepath.Split(arguments.Infile)
 		fmt.Printf("%s", "Enter name of Outfile: ")
 		num, err := fmt.Scanf("%s\n", &arguments.Outfile)
-		if num < 1 || num > 1 || err != nil {
+		if num > 1 || err != nil {
 			exit = true
 		} else {
 			arguments.Outfile = currentdir + arguments.Outfile
 			fmt.Printf("%s", "Enter name of function to run: ")
 			num, err := fmt.Scanf("%s\n", &arguments.Function)
-			if num < 1 || num > 1 || !arguments.validatefunction(arguments.Function) || err != nil {
+			if num > 1 || err != nil || !arguments.validatefunction(arguments.Function) || arguments.Function == "exit" {
 				exit = true
 			} else {
 				fmt.Printf("%s", "Enter number of pixels: ")
 				num, err := fmt.Scanf("%d\n", &arguments.Pixels)
 				if err != nil {
 					exit = true
-				} else if num < 1 || num > 1 {
+				} else if num > 1 {
 					arguments.Pixels = 0
 				}
 			}
