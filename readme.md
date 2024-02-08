@@ -1,6 +1,7 @@
 ![Go logo](https://go.dev/images/go-logo-blue.svg)
 
 # ImageEdit package
+![dino] ![dinoPIX]
 
 ![Build Report Card](https://img.shields.io/badge/Build-passing-brightgreen)
 ### Going Forward
@@ -37,40 +38,38 @@ Example:
 ~~~
 ---
 ### Image Functions
-- Flip left right
-  - Before
 
   ![dino]
 
-  - After
-
-  ![dinoFX]
-
-- Flip up down
+- Flip right
 
   ![dinoFY]
+
+- Flip down
+
+  ![dinoFX]
 
 - rotate
 
   ![dinoFXY]
 
-- Round robin left right 200px
-
-  ![dinoRRX]
-
-- Round robin image top down 100px
+- Round robin y-axis 33px
 
   ![dinoRRY]
 
-- Round robin 33px columns
+- Round robin x-axis 33px
 
-  ![dinoRRYcolumns]
+  ![dinoRRX]
 
-- Round robin 33px rows
+- Round robin columns 3px
+
+  ![dinoRRC]
+
+- Round robin rows 3px
 
   ![dinoRRR]
 
-- Pixelate 13px
+- Pixelate 3px
 
   ![dinoPIX]
 
@@ -101,6 +100,6 @@ C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./p
 [dinoRRX]:./assets/roundrobin/dinoRRX.png
 [dinoRRY]:./assets/roundrobin/dinoRRY.png
 [dinoRRR]:./assets/roundrobin/dinoRRR.png
-[dinoRRYcolumns]:./assets/roundrobin/dinoRRC.png
+[dinoRRC]:./assets/roundrobin/dinoRRC.png
 [dinoFXY]:./assets/flip/dinoFXY.png
 [dinoPIX]:./assets/pixelate/dinoPIX.png
