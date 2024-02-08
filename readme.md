@@ -1,4 +1,7 @@
-# ![Go logo](https://go.dev/images/go-logo-blue.svg) Edit images using Go
+# ![Go logo](https://go.dev/images/go-logo-blue.svg) ImageEdit
+
+
+![Build Report Card](https://img.shields.io/badge/Build-passing-brightgreen)
 ### Going Forward
 - More image functions
 ---
