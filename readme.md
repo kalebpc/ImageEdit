@@ -80,7 +80,7 @@ C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./p
 
 C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png functions=RRR pixels=33
   
-  * `pixels` only required when using round robin funcs *
+  * `pixels` not required for flip functions *
 ~~~
 ### Arguments
 | Key | Example Value |
