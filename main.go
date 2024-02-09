@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/png"
 	"os"
+	"reflect"
 
 	"github.com/kalebpc/ImageEdit/internal/pkg/args"
 	"github.com/kalebpc/ImageEdit/internal/pkg/imageedit"
@@ -29,34 +29,8 @@ func processImage(arguments args.Arguments) {
 		if err != nil {
 			fmt.Println("Cannot decode file")
 		} else {
-			imageedit.Newimg = image.NewNRGBA(image.Rectangle{image.Point{imageedit.Oldimg.Bounds().Min.X, imageedit.Oldimg.Bounds().Min.Y}, image.Point{imageedit.Oldimg.Bounds().Max.X, imageedit.Oldimg.Bounds().Max.Y}})
-			// Apply imageedit method
-			switch arguments.Function {
-			case "FX":
-				// flip over x-axis
-				imageedit.FX()
-			case "FY":
-				// flip over y-axis
-				imageedit.FY()
-			case "FXY":
-				// rotate
-				imageedit.FXY()
-			case "RRX":
-				// roundrobin around x-axis
-				imageedit.RRX(arguments.Pixels)
-			case "RRY":
-				// roundrobin around y-axis
-				imageedit.RRY(arguments.Pixels)
-			case "RRR":
-				// roundrobin `pixels` size rows
-				imageedit.RRR(arguments.Pixels)
-			case "RRC":
-				// roundrobin `pixels` size columns
-				imageedit.RRC(arguments.Pixels)
-			case "PIX":
-				// `pixels` size pixelate whole image
-				imageedit.PIX(arguments.Pixels)
-			}
+			imageedit.New()
+			reflect.ValueOf(&imageedit).MethodByName(arguments.Function).Call([]reflect.Value{})
 			// create new file
 			newfile, err := os.Create(arguments.Outfile)
 			if err != nil {
@@ -73,5 +47,4 @@ func processImage(arguments args.Arguments) {
 			}
 		}
 	}
-	return
 }
