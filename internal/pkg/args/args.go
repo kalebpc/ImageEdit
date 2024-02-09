@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/kalebpc/ImageEdit/internal/pkg/imageedit"
 )
 
 type Arguments struct {
@@ -93,15 +96,7 @@ func (arguments Arguments) validateOutfile() bool {
 
 func (arguments Arguments) validateFunction(function string) bool {
 	result := true
-	validarguments := []string{"FX", "FY", "FXY", "RRX", "RRY", "RRR", "RRC", "PIX"}
-	counter := len(validarguments)
-	for _, valid := range validarguments {
-		if function == valid {
-			counter -= 1
-		}
-	}
-	if counter == len(validarguments) {
-		result = false
-	}
+	functions := reflect.TypeOf(&imageedit.Imageedit{})
+	_, result = functions.MethodByName(function)
 	return result
 }
