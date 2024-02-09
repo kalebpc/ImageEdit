@@ -123,9 +123,6 @@ func (imageedit *Imageedit) RRC(pixels int) {
 }
 
 func (imageedit *Imageedit) PIX(pixels int) {
-	if pixels < 1 {
-		pixels = 1
-	}
 	for i := imageedit.Newimg.Bounds().Min.X; i < imageedit.Newimg.Bounds().Max.X; i += pixels {
 		for j := imageedit.Newimg.Bounds().Min.Y; j < imageedit.Newimg.Bounds().Max.Y; j += pixels {
 			sample := imageedit.Oldimg.At(i, j)
