@@ -7,7 +7,7 @@
 ### Going Forward
 - More image functions
 ---
-# Cli User Interface: passing args
+# Cli User Interface
 - Run in cmd line with required arguments
 ~~~
 C:\path\to\ImageEditfolder> go run main.go infile=./file/path outfile=./newfile/path ...
