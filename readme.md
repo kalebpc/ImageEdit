@@ -36,21 +36,17 @@ Example:
 ### Arguments
 | Key | Example Value |
 |-|-|
-| *infile | `./forward/path/to/file` |
-| *outfile | `../../backward/path/to/file` |
+| infile | `./forward/path/to/file` |
+| outfile | `../../backward/path/to/file` |
 | function| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC` `PIX`|
-| **pixels | `33`|
+| *pixels | `33`|
 ---
-**requires exact file path relative to ImageEdit folder or .exe location*
-
-***requires integer*
+**requires integer*
 ### Usage examples
 ~~~
 C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=FX
 
 C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=RRR pixels=33
-  
-  * `pixels` not required for flip function *
 ~~~
 ---
 # Function Examples
