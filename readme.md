@@ -7,78 +7,12 @@
 ### Going Forward
 - More image functions
 ---
-# Cli User Interface: no args
-Build the ImageEdit.exe binary
-~~~
-C:\path\to\ImageEditfolder> go build
-~~~
-Run ImageEdit
-~~~
-C:\path\to\ImageEditfolder> ./ImageEdit
-~~~
-File picker will open folder to /%USERPROFILE%/pictures
-
-NOTE: if pictures folder is not in this path, change path in `ui.go` file
-~~~
-Pick a file:
-
-> drwxrwxrwx      foo.png
-> drwxrwxrwx      bar.png
-~~~
-Use arrows to highlight image file
-
-Hit `enter`
-
-Hit `q`
-
-Type filename with extension
-
-~~~
-  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
-
-Enter name of Outfile:          fooPIX.png
-~~~
-Hit `enter`
-
-Type name of function
-~~~
-  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
-
-Enter name of Outfile:          fooPIX.png
-Enter name of function to run:  PIX
-~~~
-Hit `enter`
-
-Type number of pixels
-~~~
-  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
-
-Enter name of Outfile:          fooPIX.png
-Enter name of function to run:  PIX
-Enter number of pixels:         15
-~~~
-Hit `enter`
-~~~
-  You selected: C:\Users\%USERPROFILE%\pictures\foo.png
-
-Enter name of Outfile:          fooPIX.png
-Enter name of function to run:  PIX
-Enter number of pixels:         15
-New Image Created!
-~~~
-Look in %USERPROFILE%\pictures folder to find newly pixelated 'fooPIX.png' image
-
----
 # Cli User Interface: passing args
 - Run in cmd line with required arguments
 ~~~
 C:\path\to\ImageEditfolder> go run main.go infile=./file/path outfile=./newfile/path ...
 ~~~
-- Builds to .exe; runs, but have to pass arguments
-~~~
-C:\path\to\ImageEditfolder> go build
-C:\path\to\ImageEditfolder> ./ImageEdit infile=./file/path outfile=./newfile/path ...
-~~~
+- Build the ImageEdit.exe, show help instructions
 ~~~
 C:\path\to\ImageEditfolder> go build
 C:\path\to\ImageEditfolder> ./ImageEdit --help
@@ -88,15 +22,15 @@ Usage:
 Arguments:
       infile      : path to photo to edit
       outfile     : path to save new edited photo
-      function    : name of edit function
+      function   : name of edit function
                     [FX]   [FY]   [RRC]
-                    [FXY]  [RRY]
+                    [FXY]  [RRY]  [PIX]
                     [RRX]  [RRR]
       pixels      : number of pixels to edit
       help        : print usage instructions
 
 Example:
-      C:\path\to\ImageEditfolder> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50
+      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50
 ~~~
 ---
 ### Arguments
