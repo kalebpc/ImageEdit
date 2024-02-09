@@ -15,10 +15,9 @@ type Arguments struct {
 	Infile   string
 	Outfile  string
 	Function string
-	Pixels   int
 }
 
-func GetArgs() (arguments Arguments, exit bool) {
+func GetArgs() (arguments Arguments, imageedit imageedit.Imageedit, exit bool) {
 	exit = false
 	for _, arg := range os.Args[1:] {
 		if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") {
@@ -46,18 +45,18 @@ func GetArgs() (arguments Arguments, exit bool) {
 				case "pixels":
 					temp, err := strconv.Atoi(arglist[1])
 					if err != nil || temp < 1 || temp > 1000 {
-						arguments.Pixels = 1
+						imageedit.Pixels = 1
 					} else {
-						arguments.Pixels = temp
+						imageedit.Pixels = temp
 					}
 				}
 			}
 		}
 	}
-	if len(arguments.Infile) < 1 || len(arguments.Outfile) < 1 || len(arguments.Function) < 1 || arguments.Pixels < 1 {
+	if len(arguments.Infile) < 1 || len(arguments.Outfile) < 1 || len(arguments.Function) < 1 || imageedit.Pixels < 1 {
 		exit = true
 	}
-	return arguments, exit
+	return arguments, imageedit, exit
 }
 
 func (arguments Arguments) validateInfile() bool {
