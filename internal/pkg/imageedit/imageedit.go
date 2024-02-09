@@ -7,8 +7,12 @@ type Imageedit struct {
 	Newimg *image.NRGBA
 }
 
+func (imageedit *Imageedit) New() {
+	imageedit.Newimg = image.NewNRGBA(image.Rectangle{image.Point{imageedit.Oldimg.Bounds().Min.X, imageedit.Oldimg.Bounds().Min.Y}, image.Point{imageedit.Oldimg.Bounds().Max.X, imageedit.Oldimg.Bounds().Max.Y}})
+}
+
 func (imageedit *Imageedit) FY() {
-	// flip imageedit.img over Y axis
+	// flip over Y axis
 	for i := imageedit.Oldimg.Bounds().Min.X; i < imageedit.Oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.Oldimg.Bounds().Min.Y; j < imageedit.Oldimg.Bounds().Max.Y; j += 1 {
 			k := imageedit.Oldimg.Bounds().Max.X - i - 1
@@ -18,7 +22,7 @@ func (imageedit *Imageedit) FY() {
 }
 
 func (imageedit *Imageedit) FX() {
-	// flip imageedit.img over X axis
+	// flip over X axis
 	for i := imageedit.Oldimg.Bounds().Min.X; i < imageedit.Oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.Oldimg.Bounds().Min.Y; j < imageedit.Oldimg.Bounds().Max.Y; j += 1 {
 			k := imageedit.Oldimg.Bounds().Max.Y - j - 1
@@ -28,7 +32,7 @@ func (imageedit *Imageedit) FX() {
 }
 
 func (imageedit *Imageedit) FXY() {
-	// flip imageedit.img over both axis
+	// flip over both axis
 	for i := imageedit.Oldimg.Bounds().Min.X; i < imageedit.Oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.Oldimg.Bounds().Min.Y; j < imageedit.Oldimg.Bounds().Max.Y; j += 1 {
 			k := imageedit.Oldimg.Bounds().Max.X - i - 1
@@ -39,7 +43,7 @@ func (imageedit *Imageedit) FXY() {
 }
 
 func (imageedit *Imageedit) RRY(pixels int) {
-	// round robin imageedit.img over Y axis
+	// round robin over Y axis
 	for i := imageedit.Oldimg.Bounds().Min.X; i < imageedit.Oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.Oldimg.Bounds().Min.Y; j < imageedit.Oldimg.Bounds().Max.Y; j += 1 {
 			if i < imageedit.Oldimg.Bounds().Min.X+pixels {
@@ -53,7 +57,7 @@ func (imageedit *Imageedit) RRY(pixels int) {
 }
 
 func (imageedit *Imageedit) RRX(pixels int) {
-	// round robin imageedit.img over X axis
+	// round robin over X axis
 	for i := imageedit.Oldimg.Bounds().Min.X; i < imageedit.Oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.Oldimg.Bounds().Min.Y; j < imageedit.Oldimg.Bounds().Max.Y; j += 1 {
 			if j < imageedit.Oldimg.Bounds().Min.Y+pixels {
@@ -67,7 +71,7 @@ func (imageedit *Imageedit) RRX(pixels int) {
 }
 
 func (imageedit *Imageedit) RRR(pixels int) {
-	// round robin imageedit.img every other pixels size over x axis; rows
+	// round robin every other pixels size over x axis; rows
 	counter := 0
 	for j := imageedit.Oldimg.Bounds().Min.Y; j < imageedit.Oldimg.Bounds().Max.Y; j += 1 {
 		counter += 1
@@ -95,7 +99,7 @@ func (imageedit *Imageedit) RRR(pixels int) {
 }
 
 func (imageedit *Imageedit) RRC(pixels int) {
-	// round robin imageedit.img every other pixels size over y axis; columns
+	// round robin every other pixels size over y axis; columns
 	counter := 0
 	for i := imageedit.Oldimg.Bounds().Min.X; i < imageedit.Oldimg.Bounds().Max.X; i += 1 {
 		counter += 1
