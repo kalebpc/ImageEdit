@@ -22,25 +22,26 @@ func GetArgs() (arguments Arguments, exit bool) {
 			fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[FX | FY | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      function   : name of edit function\n                    [FX]   [FY]   [RRC]\n                    [FXY]  [RRY]  [PIX]\n                    [RRX]  [RRR]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50")
 			exit = true
 		} else {
-			arg := strings.Split(arg, "=")
-			if len(arg) > 1 {
-				if strings.Contains(arg[0], "infile") {
-					arguments.Infile = arg[1]
+			arglist := strings.Split(arg, "=")
+			if len(arglist) > 1 {
+				switch arglist[0] {
+				case "infile":
+					arguments.Infile = arglist[1]
 					if !arguments.validateInfile() {
 						exit = true
 					}
-				} else if strings.Contains(arg[0], "outfile") {
-					arguments.Outfile = arg[1]
+				case "outfile":
+					arguments.Outfile = arglist[1]
 					if !arguments.validateOutfile() {
 						exit = true
 					}
-				} else if strings.Contains(arg[0], "function") {
-					arguments.Function = arg[1]
-					if !arguments.validatefunction(arg[1]) {
+				case "function":
+					arguments.Function = arglist[1]
+					if !arguments.validateFunction(arglist[1]) {
 						exit = true
 					}
-				} else if strings.Contains(arg[0], "pixels") {
-					temp, err := strconv.Atoi(arg[1])
+				case "pixels":
+					temp, err := strconv.Atoi(arglist[1])
 					if err != nil || temp < 1 || temp > 1000 {
 						arguments.Pixels = 1
 					} else {
@@ -50,7 +51,7 @@ func GetArgs() (arguments Arguments, exit bool) {
 			}
 		}
 	}
-	if len(arguments.Infile) < 1 || len(arguments.Outfile) < 1 || len(arguments.Function) < 1 {
+	if len(arguments.Infile) < 1 || len(arguments.Outfile) < 1 || len(arguments.Function) < 1 || arguments.Pixels < 1 {
 		exit = true
 	}
 	return arguments, exit
@@ -90,7 +91,7 @@ func (arguments Arguments) validateOutfile() bool {
 	return result
 }
 
-func (arguments Arguments) validatefunction(function string) bool {
+func (arguments Arguments) validateFunction(function string) bool {
 	result := true
 	validarguments := []string{"FX", "FY", "FXY", "RRX", "RRY", "RRR", "RRC", "PIX"}
 	counter := len(validarguments)
