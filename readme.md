@@ -3,7 +3,7 @@
 # ImageEdit package
 ![dino] ![dinoPIX]
 
-![Build Report Card](https://img.shields.io/badge/Build-issues-red)
+![Build Report Card](https://img.shields.io/badge/Build-working-brightgreen)
 ### Going Forward
 - More image functions
 ---
