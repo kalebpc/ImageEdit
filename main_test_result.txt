@@ -1,0 +1,5 @@
+PIX dino.png
+N       280           4230308 ns/op         1268476 B/op        150 allocs/op
+N       289           4224538 ns/op         1268583 B/op        150 allocs/op
+N       280           4230973 ns/op         1268522 B/op        150 allocs/op
+N       284           4130067 ns/op         1268567 B/op        150 allocs/op
