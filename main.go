@@ -35,7 +35,7 @@ func processImage(arguments []string, imageedit Imageedit) {
 		if err != nil {
 			fmt.Println("Cannot decode file")
 		} else {
-			imageedit.Setnewimg()
+			imageedit.newimg = image.NewNRGBA(image.Rectangle{image.Point{imageedit.oldimg.Bounds().Min.X, imageedit.oldimg.Bounds().Min.Y}, image.Point{imageedit.oldimg.Bounds().Max.X, imageedit.oldimg.Bounds().Max.Y}})
 			reflect.TypeOf(reflect.ValueOf(&imageedit).MethodByName(arguments[2]).Call([]reflect.Value{}))
 			newfile, err := os.Create(arguments[1])
 			if err != nil {
@@ -138,10 +138,6 @@ func validateFunction(function string) bool {
 	functions := reflect.TypeOf(&Imageedit{})
 	_, result = functions.MethodByName(function)
 	return result
-}
-
-func (imageedit *Imageedit) Setnewimg() {
-	imageedit.newimg = image.NewNRGBA(image.Rectangle{image.Point{imageedit.oldimg.Bounds().Min.X, imageedit.oldimg.Bounds().Min.Y}, image.Point{imageedit.oldimg.Bounds().Max.X, imageedit.oldimg.Bounds().Max.Y}})
 }
 
 func (imageedit *Imageedit) FY() {
