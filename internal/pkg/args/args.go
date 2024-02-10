@@ -12,6 +12,7 @@ import (
 )
 
 func GetArgs() (arguments []string, imageedit imageedit.Imageedit, exit bool) {
+	arguments = []string{"", "", ""}
 	exit = false
 	for _, arg := range os.Args[1:] {
 		if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") {
@@ -22,19 +23,19 @@ func GetArgs() (arguments []string, imageedit imageedit.Imageedit, exit bool) {
 			if len(arglist) > 1 {
 				switch arglist[0] {
 				case "infile":
-					arguments = append(arguments, arglist[1])
+					arguments[0] = arglist[1]
 					if !validateInfile(arglist[1]) {
 						exit = true
 						break
 					}
 				case "outfile":
-					arguments = append(arguments, arglist[1])
+					arguments[1] = arglist[1]
 					if !validateOutfile(arglist[1]) {
 						exit = true
 						break
 					}
 				case "function":
-					arguments = append(arguments, arglist[1])
+					arguments[2] = arglist[1]
 					if !validateFunction(arglist[1]) {
 						exit = true
 						break
