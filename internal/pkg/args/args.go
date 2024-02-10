@@ -11,13 +11,7 @@ import (
 	"github.com/kalebpc/ImageEdit/internal/pkg/imageedit"
 )
 
-type Arguments struct {
-	Infile   string
-	Outfile  string
-	Function string
-}
-
-func GetArgs() (arguments Arguments, imageedit imageedit.Imageedit, exit bool) {
+func GetArgs() (arguments []string, imageedit imageedit.Imageedit, exit bool) {
 	exit = false
 	for _, arg := range os.Args[1:] {
 		if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") {
@@ -28,19 +22,22 @@ func GetArgs() (arguments Arguments, imageedit imageedit.Imageedit, exit bool) {
 			if len(arglist) > 1 {
 				switch arglist[0] {
 				case "infile":
-					arguments.Infile = arglist[1]
-					if !arguments.validateInfile() {
+					arguments = append(arguments, arglist[1])
+					if !validateInfile(arglist[1]) {
 						exit = true
+						break
 					}
 				case "outfile":
-					arguments.Outfile = arglist[1]
-					if !arguments.validateOutfile() {
+					arguments = append(arguments, arglist[1])
+					if !validateOutfile(arglist[1]) {
 						exit = true
+						break
 					}
 				case "function":
-					arguments.Function = arglist[1]
-					if !arguments.validateFunction(arglist[1]) {
+					arguments = append(arguments, arglist[1])
+					if !validateFunction(arglist[1]) {
 						exit = true
+						break
 					}
 				case "pixels":
 					temp, err := strconv.Atoi(arglist[1])
@@ -53,21 +50,21 @@ func GetArgs() (arguments Arguments, imageedit imageedit.Imageedit, exit bool) {
 			}
 		}
 	}
-	if len(arguments.Infile) < 1 || len(arguments.Outfile) < 1 || len(arguments.Function) < 1 || imageedit.Pixels < 1 {
+	if len(arguments) < 3 || imageedit.Pixels < 1 {
 		exit = true
 	}
 	return arguments, imageedit, exit
 }
 
-func (arguments Arguments) validateInfile() bool {
+func validateInfile(infile string) bool {
 	result := true
-	_, err := filepath.EvalSymlinks(arguments.Infile)
+	_, err := filepath.EvalSymlinks(infile)
 	if err != nil {
 		result = false
-	} else if arguments.Infile == "" {
+	} else if infile == "" {
 		result = false
 	} else {
-		inExt := filepath.Ext(arguments.Infile)
+		inExt := filepath.Ext(infile)
 		if inExt != ".png" {
 			result = false
 		}
@@ -75,16 +72,16 @@ func (arguments Arguments) validateInfile() bool {
 	return result
 }
 
-func (arguments Arguments) validateOutfile() bool {
+func validateOutfile(outfile string) bool {
 	result := true
-	if arguments.Outfile == "" {
+	if outfile == "" {
 		result = false
 	} else {
-		pathout := filepath.Dir(arguments.Outfile)
+		pathout := filepath.Dir(outfile)
 		if strings.Contains(strconv.QuoteRuneToASCII(os.PathSeparator), pathout) {
 			result = false
 		} else {
-			outExt := filepath.Ext(arguments.Outfile)
+			outExt := filepath.Ext(outfile)
 			if strings.Compare(outExt, ".png") != 0 {
 				result = false
 			}
@@ -93,7 +90,7 @@ func (arguments Arguments) validateOutfile() bool {
 	return result
 }
 
-func (arguments Arguments) validateFunction(function string) bool {
+func validateFunction(function string) bool {
 	result := true
 	functions := reflect.TypeOf(&imageedit.Imageedit{})
 	_, result = functions.MethodByName(function)
