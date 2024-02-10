@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"image/png"
 	"os"
 	"path/filepath"
@@ -258,7 +259,12 @@ func (imageedit *Imageedit) RRC() {
 func (imageedit *Imageedit) PIX() {
 	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X; i += imageedit.pixels {
 		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y; j += imageedit.pixels {
-			sample := imageedit.oldimg.At(i, j)
+			var sample color.Color
+			if i < imageedit.newimg.Bounds().Max.X-imageedit.pixels/2 && j < imageedit.newimg.Bounds().Max.Y-imageedit.pixels/2 {
+				sample = imageedit.oldimg.At(i+imageedit.pixels/2, j+imageedit.pixels/2)
+			} else {
+				sample = imageedit.oldimg.At(i, j)
+			}
 			for k := i; k < i+imageedit.pixels; k += 1 {
 				for l := j; l < j+imageedit.pixels; l += 1 {
 					imageedit.newimg.Set(k, l, sample)
