@@ -59,7 +59,7 @@ func getArgs() (arguments []string, imageedit Imageedit, exit bool) {
 	exit = false
 	for _, arg := range os.Args[1:] {
 		if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") {
-			fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[FX | FY | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      function   : name of edit function\n                    [FX]   [FY]   [RRC]\n                    [FXY]  [RRY]  [PIX]\n                    [RRX]  [RRR]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50")
+			fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[Flipx | Flipy | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      function    : name of edit function\n                    [Flipx]        [Flipy]           [Roundrobincolumns]\n                    [Rotate]       [Roundrobiny]     [Pixelate]\n                    [Roundrobinx]  [Roundrobinrows]  [Rgbfilter]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50")
 			exit = true
 		} else {
 			arglist := strings.Split(arg, "=")
@@ -141,7 +141,7 @@ func validateFunction(function string) bool {
 	return result
 }
 
-func (imageedit *Imageedit) FY() {
+func (imageedit *Imageedit) Flipy() {
 	// flip over Y axis
 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
@@ -151,7 +151,7 @@ func (imageedit *Imageedit) FY() {
 	}
 }
 
-func (imageedit *Imageedit) FX() {
+func (imageedit *Imageedit) Flipx() {
 	// flip over X axis
 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
@@ -161,7 +161,7 @@ func (imageedit *Imageedit) FX() {
 	}
 }
 
-func (imageedit *Imageedit) FXY() {
+func (imageedit *Imageedit) Rotate() {
 	// flip over both axis
 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
@@ -172,7 +172,7 @@ func (imageedit *Imageedit) FXY() {
 	}
 }
 
-func (imageedit *Imageedit) RRY() {
+func (imageedit *Imageedit) Roundrobiny() {
 	// round robin over Y axis
 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
@@ -186,7 +186,7 @@ func (imageedit *Imageedit) RRY() {
 	}
 }
 
-func (imageedit *Imageedit) RRX() {
+func (imageedit *Imageedit) Roundrobinx() {
 	// round robin over X axis
 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
 		for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
@@ -200,7 +200,7 @@ func (imageedit *Imageedit) RRX() {
 	}
 }
 
-func (imageedit *Imageedit) RRR() {
+func (imageedit *Imageedit) Roundrobinrows() {
 	// round robin every other pixels size over x axis; rows
 	counter := 0
 	for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
@@ -228,7 +228,7 @@ func (imageedit *Imageedit) RRR() {
 	}
 }
 
-func (imageedit *Imageedit) RRC() {
+func (imageedit *Imageedit) Roundrobincolumns() {
 	// round robin every other pixels size over y axis; columns
 	counter := 0
 	for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
@@ -256,7 +256,7 @@ func (imageedit *Imageedit) RRC() {
 	}
 }
 
-func (imageedit *Imageedit) PIX() {
+func (imageedit *Imageedit) Pixelate() {
 	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X; i += imageedit.pixels {
 		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y; j += imageedit.pixels {
 			var sample color.Color
@@ -273,3 +273,75 @@ func (imageedit *Imageedit) PIX() {
 		}
 	}
 }
+
+func (imageedit *Imageedit) Rgbfilter() {
+	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X; i += 1 {
+		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y; j += 1 {
+			imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
+			sample := imageedit.newimg.NRGBAAt(i, j)
+			// tint towards red
+			if imageedit.pixels == 1 {
+				sample.R = sample.R + sample.R/4
+				sample.G = sample.G - sample.G/4
+				sample.B = sample.B - sample.B/4
+				// tint towards green
+			} else if imageedit.pixels == 2 {
+				sample.R = sample.R - sample.R/4
+				sample.G = sample.G + sample.G/4
+				sample.B = sample.B - sample.B/4
+				// tint towrds blue
+			} else if imageedit.pixels == 3 {
+				sample.R = sample.R - sample.R/4
+				sample.G = sample.G - sample.G/4
+				sample.B = sample.B + sample.B/4
+			}
+			imageedit.newimg.SetNRGBA(i, j, sample)
+		}
+	}
+}
+
+// func (imageedit *Imageedit) FOO() {
+// 	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X; i += 1 {
+// 		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y; j += 1 {
+// 			imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, j))
+// 		}
+// 	}
+// 	for i := imageedit.newimg.Bounds().Min.X; i < imageedit.newimg.Bounds().Max.X; i += 1 {
+// 		for j := imageedit.newimg.Bounds().Min.Y; j < imageedit.newimg.Bounds().Max.Y; j += 1 {
+// 			sample := imageedit.newimg.NRGBAAt(i, j)
+// 			red := uint32(0)
+// 			green := uint32(0)
+// 			blue := uint32(0)
+// 			alpha := uint32(0)
+// 			counter := 0
+// 			if i < imageedit.newimg.Bounds().Max.X-imageedit.pixels && j < imageedit.newimg.Bounds().Max.Y-imageedit.pixels {
+// 				for k := i; k < i+imageedit.pixels; k += 1 {
+// 					for l := j; l < j+imageedit.pixels; l += 1 {
+// 						counter += 1
+// 						red = red + uint32(imageedit.newimg.NRGBAAt(k, l).R)
+// 						green = green + uint32(imageedit.newimg.NRGBAAt(k, l).G)
+// 						blue = blue + uint32(imageedit.newimg.NRGBAAt(k, l).B)
+// 						alpha = alpha + uint32(imageedit.newimg.NRGBAAt(k, l).A)
+// 					}
+// 				}
+// 			} else {
+// 				for k := i; k < imageedit.newimg.Bounds().Max.X; k += 1 {
+// 					for l := j; l < imageedit.newimg.Bounds().Max.Y; l += 1 {
+// 						counter += 1
+// 						red = red + uint32(imageedit.newimg.NRGBAAt(k, l).R)
+// 						green = green + uint32(imageedit.newimg.NRGBAAt(k, l).G)
+// 						blue = blue + uint32(imageedit.newimg.NRGBAAt(k, l).B)
+// 						alpha = alpha + uint32(imageedit.newimg.NRGBAAt(k, l).A)
+// 					}
+// 				}
+// 			}
+// 			if counter > 0 {
+// 				sample.R = uint8(red / uint32(counter))
+// 				sample.G = uint8(green / uint32(counter))
+// 				sample.B = uint8(blue / uint32(counter))
+// 				sample.A = uint8(alpha / uint32(counter))
+// 			}
+// 			imageedit.newimg.Set(i, j, sample)
+// 		}
+// 	}
+// }
