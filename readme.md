@@ -3,7 +3,6 @@
 # ImageEdit package
 ![dino] ![dinoPIX]
 
-![Build Report Card](https://img.shields.io/badge/Build-working-brightgreen)
 ### Going Forward
 - More image functions
 ---
@@ -17,20 +16,20 @@ C:\path\to\ImageEditfolder> go run main.go infile=./file/path outfile=./newfile/
 C:\path\to\ImageEditfolder> go build
 C:\path\to\ImageEditfolder> ./ImageEdit --help
 Usage:
-      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[FX | FY | ...] pixels=[int]
+      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[Flipx | Flipy | ...] pixels=[int]
 
 Arguments:
       infile      : path to photo to edit
       outfile     : path to save new edited photo
       function   : name of edit function
-                    [FX]   [FY]   [RRC]
-                    [FXY]  [RRY]  [PIX]
-                    [RRX]  [RRR]
+                    [Flipx]        [Flipy]           [Roundrobincolumns]
+                    [Rotate]       [Roundrobiny]     [Pixelate]
+                    [Roundrobinx]  [Roundrobinrows]  [Rgbfilter]
       pixels      : number of pixels to edit
       help        : print usage instructions
 
 Example:
-      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50
+      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=Roundrobinrows pixels=50
 ~~~
 ---
 ### Arguments
@@ -38,15 +37,14 @@ Example:
 |-|-|
 | infile | `./forward/path/to/file` |
 | outfile | `../../backward/path/to/file` |
-| function| `FX` `FY` `FXY` `RRX` `RRY` `RRR` `RRC` `PIX`|
+| function| `Flipx` `Flipy` `Rotate` `Roundrobinx` `Roundrobiny` `Roundrobinrows` `Roundrobincolumns` `Pixelate` `Rgbfilter`|
 | *pixels | `33`|
 ---
-**requires integer*
 ### Usage examples
 ~~~
-C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=FX
+C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=Flipx pixels=
 
-C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=RRR pixels=33
+C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./path/newpicture.png function=Roundrobinrows pixels=33
 ~~~
 ---
 # Function Examples
@@ -57,11 +55,7 @@ C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./p
 
   ![dinoFY]
 
-- Flip down
-
-  ![dinoFX]
-
-- rotate
+- Rotate
 
   ![dinoFXY]
 
@@ -69,17 +63,9 @@ C:\path\to\ImageEditfolder> go run main.go infile=./path/picture.png outfile=./p
 
   ![dinoRRY]
 
-- Round robin x-axis 33px
-
-  ![dinoRRX]
-
 - Round robin columns 3px
 
   ![dinoRRC]
-
-- Round robin rows 3px
-
-  ![dinoRRR]
 
 - Pixelate 3px
 
