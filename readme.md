@@ -21,7 +21,7 @@ Usage:
 Arguments:
       infile      : path to photo to edit
       outfile     : path to save new edited photo
-      function   : name of edit function
+      function    : name of edit function
                     [Flipx]        [Flipy]           [Roundrobincolumns]
                     [Rotate]       [Roundrobiny]     [Pixelate]
                     [Roundrobinx]  [Roundrobinrows]  [Rgbfilter]
