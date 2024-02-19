@@ -30,66 +30,67 @@ func processImage(arguments []string, imageedit Imageedit) {
 	file, err := os.Open(arguments[0])
 	if err != nil {
 		fmt.Println("Error opening infile")
-	} else {
-		defer file.Close()
-		imageedit.oldimg, err = png.Decode(file)
-		if err != nil {
-			fmt.Println("Cannot decode file")
-		} else {
-			imageedit.newimg = image.NewNRGBA(image.Rectangle{image.Point{imageedit.oldimg.Bounds().Min.X, imageedit.oldimg.Bounds().Min.Y}, image.Point{imageedit.oldimg.Bounds().Max.X, imageedit.oldimg.Bounds().Max.Y}})
-			reflect.TypeOf(reflect.ValueOf(&imageedit).MethodByName(arguments[2]).Call([]reflect.Value{}))
-			newfile, err := os.Create(arguments[1])
-			if err != nil {
-				fmt.Println("Error Creating new outfile")
-			} else {
-				defer newfile.Close()
-				err = png.Encode(newfile, imageedit.newimg)
-				if err != nil {
-					fmt.Println("Error Encoding new image")
-				} else {
-					fmt.Println("New Image Created!")
-				}
-			}
-		}
+		return
 	}
+	defer file.Close()
+	imageedit.oldimg, err = png.Decode(file)
+	if err != nil {
+		fmt.Println("Cannot decode file")
+		return
+	}
+	imageedit.newimg = image.NewNRGBA(image.Rectangle{image.Point{imageedit.oldimg.Bounds().Min.X, imageedit.oldimg.Bounds().Min.Y}, image.Point{imageedit.oldimg.Bounds().Max.X, imageedit.oldimg.Bounds().Max.Y}})
+	reflect.TypeOf(reflect.ValueOf(&imageedit).MethodByName(arguments[2]).Call([]reflect.Value{}))
+	newfile, err := os.Create(arguments[1])
+	if err != nil {
+		fmt.Println("Error Creating new outfile")
+		return
+	}
+	defer newfile.Close()
+	err = png.Encode(newfile, imageedit.newimg)
+	if err != nil {
+		fmt.Println("Error Encoding new image")
+		return
+	}
+	fmt.Println("New Image Created!")
 }
 
-func getArgs() (arguments []string, imageedit Imageedit, exit bool) {
-	arguments = []string{"", "", ""}
-	exit = false
+func getArgs() ([]string, Imageedit, bool) {
+	arguments := []string{"", "", ""}
+	exit := false
+	var imageedit Imageedit
 	for _, arg := range os.Args[1:] {
 		if strings.Contains(arg, "-h") || strings.Contains(arg, "--help") {
 			fmt.Println("Usage:\n      ImageEdit [args] infile=[path/filename.png] outfile=[path/filename.png] function=[Flipx | Flipy | ...] pixels=[int]\n\nArguments:\n      infile      : path to photo to edit\n      outfile     : path to save new edited photo\n      function    : name of edit function\n                    [Flipx]        [Flipy]           [Roundrobincolumns]\n                    [Rotate]       [Roundrobiny]     [Pixelate]\n                    [Roundrobinx]  [Roundrobinrows]  [Rgbfilter]\n      pixels      : number of pixels to edit\n      help        : print usage instructions\n\nExample:\n      C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=RRR pixels=50")
 			exit = true
-		} else {
-			arglist := strings.Split(arg, "=")
-			if len(arglist) > 1 {
-				switch arglist[0] {
-				case "infile":
-					arguments[0] = arglist[1]
-					if !validateInfile(arglist[1]) {
-						exit = true
-						break
-					}
-				case "outfile":
-					arguments[1] = arglist[1]
-					if !validateOutfile(arglist[1]) {
-						exit = true
-						break
-					}
-				case "function":
-					arguments[2] = arglist[1]
-					if !validateFunction(arglist[1]) {
-						exit = true
-						break
-					}
-				case "pixels":
-					temp, err := strconv.Atoi(arglist[1])
-					if err != nil || temp < 1 || temp > 1000 {
-						imageedit.pixels = 1
-					} else {
-						imageedit.pixels = temp
-					}
+			return arguments, imageedit, exit
+		}
+		arglist := strings.Split(arg, "=")
+		if len(arglist) > 1 {
+			switch arglist[0] {
+			case "infile":
+				arguments[0] = arglist[1]
+				if !validateInfile(arglist[1]) {
+					exit = true
+					return arguments, imageedit, exit
+				}
+			case "outfile":
+				arguments[1] = arglist[1]
+				if !validateOutfile(arglist[1]) {
+					exit = true
+					return arguments, imageedit, exit
+				}
+			case "function":
+				arguments[2] = arglist[1]
+				if !validateFunction(arglist[1]) {
+					exit = true
+					return arguments, imageedit, exit
+				}
+			case "pixels":
+				temp, err := strconv.Atoi(arglist[1])
+				if err != nil || temp < 1 || temp > 1000 {
+					imageedit.pixels = 1
+				} else {
+					imageedit.pixels = temp
 				}
 			}
 		}
