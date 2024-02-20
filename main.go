@@ -102,43 +102,40 @@ func getArgs() ([]string, Imageedit, bool) {
 }
 
 func validateInfile(infile string) bool {
-	result := true
 	_, err := filepath.EvalSymlinks(infile)
 	if err != nil {
-		result = false
-	} else if infile == "" {
-		result = false
-	} else {
-		inExt := filepath.Ext(infile)
-		if inExt != ".png" {
-			result = false
-		}
+		return false
 	}
-	return result
+	if infile == "" {
+		return false
+	}
+	inExt := filepath.Ext(infile)
+	if inExt == ".png" {
+		return true
+	} else {
+		return false
+	}
 }
 
 func validateOutfile(outfile string) bool {
-	result := true
 	if outfile == "" {
-		result = false
-	} else {
-		pathout := filepath.Dir(outfile)
-		if strings.Contains(strconv.QuoteRuneToASCII(os.PathSeparator), pathout) {
-			result = false
-		} else {
-			outExt := filepath.Ext(outfile)
-			if strings.Compare(outExt, ".png") != 0 {
-				result = false
-			}
-		}
+		return false
 	}
-	return result
+	pathout := filepath.Dir(outfile)
+	if strings.Contains(strconv.QuoteRuneToASCII(os.PathSeparator), pathout) {
+		return false
+	}
+	outExt := filepath.Ext(outfile)
+	if outExt == ".png" {
+		return true
+	} else {
+		return false
+	}
 }
 
 func validateFunction(function string) bool {
-	result := true
 	functions := reflect.TypeOf(&Imageedit{})
-	_, result = functions.MethodByName(function)
+	_, result := functions.MethodByName(function)
 	return result
 }
 
@@ -213,7 +210,6 @@ func (imageedit *Imageedit) Roundrobinrows() *Imageedit {
 		counter += 1
 		if counter <= imageedit.pixels {
 			for i := imageedit.oldimg.Bounds().Min.X; i < imageedit.oldimg.Bounds().Max.X; i += 1 {
-				// round robin over x axis
 				if i < imageedit.oldimg.Bounds().Min.X+imageedit.pixels {
 					k := imageedit.oldimg.Bounds().Max.X - imageedit.pixels + i - 1
 					imageedit.newimg.Set(i, j, imageedit.oldimg.At(k, j))
@@ -242,7 +238,6 @@ func (imageedit *Imageedit) Roundrobincolumns() *Imageedit {
 		counter += 1
 		if counter < imageedit.pixels {
 			for j := imageedit.oldimg.Bounds().Min.Y; j < imageedit.oldimg.Bounds().Max.Y; j += 1 {
-				// round robin over y axis
 				if j < imageedit.oldimg.Bounds().Min.Y+imageedit.pixels {
 					l := imageedit.oldimg.Bounds().Max.Y - imageedit.pixels + j - 1
 					imageedit.newimg.Set(i, j, imageedit.oldimg.At(i, l))
@@ -298,7 +293,7 @@ func (imageedit *Imageedit) Rgbfilter() *Imageedit {
 				sample.R = sample.R - sample.R/4
 				sample.G = sample.G + sample.G/4
 				sample.B = sample.B - sample.B/4
-				// tint towrds blue
+				// tint towards blue
 			} else if imageedit.pixels == 3 {
 				sample.R = sample.R - sample.R/4
 				sample.G = sample.G - sample.G/4
