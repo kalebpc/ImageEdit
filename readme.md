@@ -38,7 +38,7 @@ Example:
 | infile | `./forward/path/to/file` |
 | outfile | `../../backward/path/to/file` |
 | function| `Flipx` `Flipy` `Rotate` `Roundrobinx` `Roundrobiny` `Roundrobinrows` `Roundrobincolumns` `Pixelate` `Rgbfilter`|
-| *pixels | `33`|
+| pixels | `33`|
 ---
 ### Usage examples
 ~~~
