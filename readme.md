@@ -10,7 +10,7 @@
 - **Or** 
 - Create shortcut to script.
   - Open Shortcut Properties.
-    - Prepend Target with "powershell.exe ".
+    - Prepend Target with "powershell.exe -executionpolicy bypass ".
     - Set Run to "Minimized" (optional).
 
 ---
