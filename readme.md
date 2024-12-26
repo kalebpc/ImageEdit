@@ -1,12 +1,27 @@
 ![Go logo](https://go.dev/images/go-logo-blue.svg)
 
+# v0.1.0-alpha release
+
+### - Powershell-driven WPF interface.
+
+### **Instructions**
+
+- Run powershell script directly. 
+- **Or** 
+- Create shortcut to script.
+  - Open Shortcut Properties.
+    - Prepend Target with "powershell.exe ".
+    - Set Run to "Minimized" (optional).
+
+---
+
 # ImageEdit package
 ![dino] ![dinoPIX]
 
-### Going Forward
-- More image functions
 ---
+
 # Cli User Interface
+
 ~~~
 C:\path\to\ImageEditfolder> go run main.go infile=./file/path outfile=./newfile/path ...
 ~~~
@@ -30,6 +45,7 @@ Example:
       C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=Roundrobinrows pixels=50
 ~~~
 ---
+
 # Function Example Results
 
   ![dino]
