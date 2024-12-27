@@ -71,18 +71,14 @@ $Window.variables.xamlBrowseButton.Add_Click({
         $Window.variables.xamlBrowseTextBox.Text = $openFileDialog.FileName
         $DataTable.inputImageFullPath = $openFileDialog.FileName
         $DataTable.imageFileName = Split-Path $openFileDialog.FileName -Leaf
-        $image = New-Object System.Windows.Controls.Image
-        $image.Name = "xamlInputImage"
-        $image.Width = 215
         $bitmapImage = New-Object System.Windows.Media.Imaging.BitmapImage
         $bitmapImage.BeginInit()
+        $bitmapImage.DecodePixelWidth = 200
         $bitmapImage.UriSource = New-Object System.Uri($DataTable.inputImageFullPath)
         $bitmapImage.EndInit()
-        $bitmapImage.DecodePixelWidth = 200
-        $image.Source = $bitmapImage
-        $Window.variables.xamlImageDisplayPanel.Children.Add($image)
+        $Window.variables.xamlInputImage.Source = $bitmapImage
+        $bitmapImage.Dispose()
         Copy-Item -Path $DataTable.inputImageFullPath -Destination $DataTable.outputImageTempPath
-        $Window.variables.xamlBrowseButton.Visibility = "Hidden"
     }
 })
 
@@ -111,6 +107,9 @@ $Window.variables.xamlTransformationComboBox.Add_DropDownClosed({
         $Window.variables.xamlColorLabel.Visibility = "Visible"
         $Window.variables.xamlColorComboBox.Visibility = "Visible"
     }
+    If ($Window.variables.xamlPreviewButton.Visibility -eq "Hidden") {
+        $Window.variables.xamlPreviewButton.Visibility = "Visible"
+    }    
 })
 
 $Window.variables.xamlPixelSlider.Maximum = 100
@@ -136,22 +135,14 @@ $Window.variables.xamlColorComboBox.Add_DropDownClosed({
 
 $Window.variables.xamlPreviewButton.Add_Click({
     If (Test-Path -Path $DataTable.outputImageTempPath) {
-        If ($DataTable.chosenTransformation -ne " ") {
-            If ($Window.variables.xamlImageDisplayPanel.Children.Count -lt 2) {
-                $job = $( ./ImageEdit-amd64 $(-join ("infile", "=", '"', $($DataTable.inputImageFullPath), '"')) $(-join ("outfile", "=", '"', $($DataTable.outputImageTempPath), '"')) $(("function", $DataTable.chosenTransformation) -join "=") $(("pixels", $DataTable.pixels) -join "=") )
-                $image2 = New-Object System.Windows.Controls.Image
-                $image2.Name = "xamlOutputImage"
-                $image2.Width = 215
-                $bitmapImage2 = New-Object System.Windows.Media.Imaging.BitmapImage
-                $bitmapImage2.BeginInit()
-                $bitmapImage2.UriSource = New-Object System.Uri($DataTable.outputImageTempPath)
-                $bitmapImage2.EndInit()
-                $bitmapImage2.DecodePixelWidth = 200
-                $image2.Source = $bitmapImage2
-                $Window.variables.xamlImageDisplayPanel.Children.Add($image2)
-                $Window.variables.xamlPreviewButton.Visibility = "Hidden"
-            }
-        }
+        ./ImageEdit-amd64 $(-join ("infile", "=", '"', $($DataTable.inputImageFullPath), '"')) $(-join ("outfile", "=", '"', $($DataTable.outputImageTempPath), '"')) $(("function", $DataTable.chosenTransformation) -join "=") $(("pixels", $DataTable.pixels) -join "=")
+        $bitmapImage = New-Object System.Windows.Media.Imaging.BitmapImage
+        $bitmapImage.BeginInit()
+        $bitmapImage.DecodePixelWidth = 200
+        $bitmapImage.UriSource = New-Object System.Uri($DataTable.outputImageTempPath)
+        $bitmapImage.EndInit()
+        $Window.variables.xamlOutputImage.Source = $bitmapImage
+        $Window.variables.xamlPreviewButton.Visibility = "Collapsed"
     }
 })
 
