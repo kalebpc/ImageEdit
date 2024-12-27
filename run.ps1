@@ -3,7 +3,10 @@ Add-Type -AssemblyName System.Windows.Forms, PresentationFramework
 function Initialize-XamlWindow {
     [CmdletBinding()]
     [OutputType([psobject])]
-    param ([string]$Path)
+    param (
+        [string]$Path,
+        [string]$VariablePrefix
+    )
     [string]$xamlContent = Get-Content $Path
     [string]$xamlContent = $xamlContent -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace 'x:Class=".*?"', ''
     [xml]$xmlNodes = $xamlContent
@@ -14,14 +17,14 @@ function Initialize-XamlWindow {
 
     $variables = @{}
 
-    $xmlNodes.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ("xaml", $_.Name -join "") -Value $window.FindName($_.Name) }
+    $xmlNodes.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name (-join ("xaml", $VariablePrefix, $_.Name)) -Value $window.FindName($_.Name) }
 
     Get-Variable xaml* | ForEach-Object { $variables[$_.Name] = $_.Value }
 
     return @{window = [System.Windows.Window]$window; variables = [hashtable]$variables}
 }
 
-$Window = Initialize-XamlWindow $(Join-Path -Path $(Split-Path -Path "./MainWindow.xaml" -Parent -Resolve) -ChildPath "MainWindow.xaml")
+$MainWindow = Initialize-XamlWindow $(Join-Path -Path $(Split-Path -Path "./MainWindow.xaml" -Parent -Resolve) -ChildPath "MainWindow.xaml") "Main"
 
 $DataTable = @{
     imageFileName = " "
@@ -32,121 +35,112 @@ $DataTable = @{
     pixels = 0
 }
 
-If (Test-Path -LiteralPath $(Split-Path -Path $DataTable.outputImageTempPath -Parent)) {
+If (Test-Path -Path $(Split-Path -Path $DataTable.outputImageTempPath -Parent)) {
     Remove-Item -Path $(-join ($(Split-Path -Path $DataTable.outputImageTempPath -Parent), "\*")) -Recurse
 } Else {
     New-Item -ItemType Directory -Path $(Split-Path -Path $DataTable.outputImageTempPath -Parent)
 }
 
-$Window.variables.xamlMenuPanel.Add_MouseDown({
-    $Window.window.SizeToContent = "Manual"
-    $Window.window.WindowState = "Normal"
-    $Window.window.DragMove()
+$MainWindow.variables.xamlMainMenuPanel.Add_MouseDown({
+    $MainWindow.window.SizeToContent = "Manual"
+    $MainWindow.window.WindowState = "Normal"
+    $MainWindow.window.DragMove()
 })
 
-$Window.variables.xamlMenuPanel.Add_MouseUp({
-    $Window.window.WindowState = "Normal"
-    $Window.window.SizeToContent = "WidthAndHeight"
+$MainWindow.variables.xamlMainMenuPanel.Add_MouseUp({
+    $MainWindow.window.WindowState = "Normal"
+    $MainWindow.window.SizeToContent = "WidthAndHeight"
 })
 
-$Window.variables.xamlMenuWindowClose.Add_Click({
-    $Window.window.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+$MainWindow.variables.xamlMainMenuWindowClose.Add_Click({
+    $MainWindow.window.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
 })
 
-$Window.variables.xamlWindowControlClose.Add_Click({
-    $Window.window.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+$MainWindow.variables.xamlMainWindowControlClose.Add_Click({
+    $MainWindow.window.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
 })
 
-$Window.variables.xamlAboutLink.Add_Click({
-    [System.Diagnostics.Process]::Start($Window.variables.xamlAboutLink.Header.substring(17))
+$MainWindow.variables.xamlMainAboutLink.Add_Click({
+    [System.Diagnostics.Process]::Start($MainWindow.variables.xamlMainAboutLink.Header.substring(17))
 })
 
-$Window.variables.xamlBrowseButton.Add_Click({
+$MainWindow.variables.xamlMainBrowseButton.Add_Click({
     $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
     $openFileDialog.InitialDirectory = "%USERPROFILE%\Pictures"
     $openFileDialog.Filter = "png files (*.png)|*.png"
     $openFileDialog.FilterIndex = 2
     $openFileDialog.CheckPathExists
     If ($openFileDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-        $Window.variables.xamlBrowseTextBox.Text = $openFileDialog.FileName
+        $MainWindow.variables.xamlMainBrowseTextBox.Text = $openFileDialog.FileName
         $DataTable.inputImageFullPath = $openFileDialog.FileName
         $DataTable.imageFileName = Split-Path $openFileDialog.FileName -Leaf
         $bitmapImage = New-Object System.Windows.Media.Imaging.BitmapImage
         $bitmapImage.BeginInit()
-        $bitmapImage.DecodePixelWidth = 200
+        $bitmapImage.DecodePixelWidth = 250
         $bitmapImage.UriSource = New-Object System.Uri($DataTable.inputImageFullPath)
         $bitmapImage.EndInit()
-        $Window.variables.xamlInputImage.Source = $bitmapImage
-        $bitmapImage.Dispose()
+        $MainWindow.variables.xamlMainInputImage.Source = $bitmapImage
         Copy-Item -Path $DataTable.inputImageFullPath -Destination $DataTable.outputImageTempPath
     }
 })
 
 $functionList = @("Flipx", "Flipy", "Rotate", "Roundrobinx", "Roundrobiny", "Roundrobinrows", "Roundrobincolumns", "Pixelate", "Rgbfilter")
 ForEach ($function in $functionList) {
-    $Window.variables.xamlTransformationComboBox.Items.Add($function)
+    $MainWindow.variables.xamlMainTransformationComboBox.Items.Add($function)
 }
-$Window.variables.xamlTransformationComboBox.Add_DropDownClosed({
-    $DataTable.chosenTransformation = $Window.variables.xamlTransformationComboBox.SelectedItem
+$MainWindow.variables.xamlMainTransformationComboBox.Add_DropDownClosed({
+    $DataTable.chosenTransformation = $MainWindow.variables.xamlMainTransformationComboBox.SelectedItem
     If ($DataTable.chosenTransformation -in @("Flipx", "Flipy", "Rotate")) {
-        $Window.variables.xamlPixelSlider.Visibility = "Collapsed"
-        $Window.variables.xamlPixelLabel.Visibility = "Collapsed"
-        $Window.variables.xamlColorLabel.Visibility = "Collapsed"
-        $Window.variables.xamlColorComboBox.Visibility = "Collapsed"
-        $Window.variables.xamlPixelDisplayLabel.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainPixelSlider.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainPixelLabel.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainColorLabel.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainColorComboBox.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainPixelDisplayLabel.Visibility = "Collapsed"
     } ElseIf ($DataTable.chosenTransformation -in @("Roundrobinx", "Roundrobiny", "Roundrobinrows", "Roundrobincolumns", "Pixelate")) {
-        $Window.variables.xamlColorLabel.Visibility = "Collapsed"
-        $Window.variables.xamlColorComboBox.Visibility = "Collapsed"
-        $Window.variables.xamlPixelSlider.Visibility = "Visible"
-        $Window.variables.xamlPixelLabel.Visibility = "Visible"
-        $Window.variables.xamlPixelDisplayLabel.Visibility = "Visible"
+        $MainWindow.variables.xamlMainColorLabel.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainColorComboBox.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainPixelSlider.Visibility = "Visible"
+        $MainWindow.variables.xamlMainPixelLabel.Visibility = "Visible"
+        $MainWindow.variables.xamlMainPixelDisplayLabel.Visibility = "Visible"
     } Else {
-        $Window.variables.xamlPixelSlider.Visibility = "Collapsed"
-        $Window.variables.xamlPixelLabel.Visibility = "Collapsed"
-        $Window.variables.xamlPixelDisplayLabel.Visibility = "Collapsed"
-        $Window.variables.xamlColorLabel.Visibility = "Visible"
-        $Window.variables.xamlColorComboBox.Visibility = "Visible"
+        $MainWindow.variables.xamlMainPixelSlider.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainPixelLabel.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainPixelDisplayLabel.Visibility = "Collapsed"
+        $MainWindow.variables.xamlMainColorLabel.Visibility = "Visible"
+        $MainWindow.variables.xamlMainColorComboBox.Visibility = "Visible"
     }
-    If ($Window.variables.xamlPreviewButton.Visibility -eq "Hidden") {
-        $Window.variables.xamlPreviewButton.Visibility = "Visible"
-    }    
+    $MainWindow.variables.xamlMainPreviewButton.Visibility = "Visible"
 })
 
-$Window.variables.xamlPixelSlider.Maximum = 100
-$Window.variables.xamlPixelSlider.LargeChange = 10
-$Window.variables.xamlPixelSlider.SmallChange = 1
-$Window.variables.xamlPixelSlider.Add_ValueChanged({
-    $DataTable.pixels = [Math]::round($Window.variables.xamlPixelSlider.Value)
-    $Window.variables.xamlPixelDisplayLabel.Content = $DataTable.pixels
+$MainWindow.variables.xamlMainPixelSlider.Maximum = 100
+$MainWindow.variables.xamlMainPixelSlider.LargeChange = 10
+$MainWindow.variables.xamlMainPixelSlider.SmallChange = 1
+$MainWindow.variables.xamlMainPixelSlider.Add_ValueChanged({
+    $DataTable.pixels = [Math]::round($MainWindow.variables.xamlMainPixelSlider.Value)
+    $MainWindow.variables.xamlMainPixelDisplayLabel.Content = $DataTable.pixels
 })
 
 ForEach ($color in @("Red", "Green", "Blue")) {
-    $Window.variables.xamlColorComboBox.Items.Add($color)
+    $MainWindow.variables.xamlMainColorComboBox.Items.Add($color)
 }
-$Window.variables.xamlColorComboBox.Add_DropDownClosed({
-    If ($Window.variables.xamlColorComboBox.SelectedItem -match "Red") {
+$MainWindow.variables.xamlMainColorComboBox.Add_DropDownClosed({
+    If ($MainWindow.variables.xamlMainColorComboBox.SelectedItem -match "Red") {
         $DataTable.pixels = 1
-    } ElseIf ($Window.variables.xamlColorComboBox.SelectedItem -match "Green") {
+    } ElseIf ($MainWindow.variables.xamlMainColorComboBox.SelectedItem -match "Green") {
         $DataTable.pixels = 2
     } Else {
         $DataTable.pixels = 3
     }
 })
 
-$Window.variables.xamlPreviewButton.Add_Click({
+$MainWindow.variables.xamlMainPreviewButton.Add_Click({
     If (Test-Path -Path $DataTable.outputImageTempPath) {
         ./ImageEdit-amd64 $(-join ("infile", "=", '"', $($DataTable.inputImageFullPath), '"')) $(-join ("outfile", "=", '"', $($DataTable.outputImageTempPath), '"')) $(("function", $DataTable.chosenTransformation) -join "=") $(("pixels", $DataTable.pixels) -join "=")
-        $bitmapImage = New-Object System.Windows.Media.Imaging.BitmapImage
-        $bitmapImage.BeginInit()
-        $bitmapImage.DecodePixelWidth = 200
-        $bitmapImage.UriSource = New-Object System.Uri($DataTable.outputImageTempPath)
-        $bitmapImage.EndInit()
-        $Window.variables.xamlOutputImage.Source = $bitmapImage
-        $Window.variables.xamlPreviewButton.Visibility = "Collapsed"
+        Display-ImagePreview
     }
 })
 
-$Window.variables.xamlSaveButton.Add_Click({
+$MainWindow.variables.xamlMainSaveButton.Add_Click({
     If ($DataTable.inputImageFullPath -ne " ") {
         $saveFileDialog = New-Object System.Windows.Forms.SaveFileDialog
         $saveFileDialog.InitialDirectory = "%USERPROFILE%\Pictures"
@@ -154,7 +148,19 @@ $Window.variables.xamlSaveButton.Add_Click({
         $saveFileDialog.FilterIndex = 2
         $saveFileDialog.OverwritePrompt
         If ($DataTable.chosenTransformation -ne " ") {
-            $saveFileDialog.FileName = -join ( $([System.IO.Path]::GetFileNameWithoutExtension($DataTable.inputImageFullPath)), "-", $DataTable.chosenTransformation )
+            If ($DataTable.chosenTransformation -in @("Roundrobinx", "Roundrobiny", "Roundrobinrows", "Roundrobincolumns", "Pixelate")) {
+                $saveFileDialog.FileName = -join ( $([System.IO.Path]::GetFileNameWithoutExtension($DataTable.inputImageFullPath)), "-", $DataTable.chosenTransformation, "-", $DataTable.pixels )
+            } ElseIf ($DataTable.chosenTransformation -eq "Rgbfilter") {
+                $color = ""
+                If ($DataTable.pixels -eq 1) {
+                    $color = "Red"
+                } ElseIf ($DataTable.pixels -eq 2) {
+                    $color = "Green"
+                } Else {
+                    $color = "blue"
+                }
+                $saveFileDialog.FileName = -join ( $([System.IO.Path]::GetFileNameWithoutExtension($DataTable.inputImageFullPath)), "-", $DataTable.chosenTransformation, "-", $color )
+            }            
         } Else {
             $saveFileDialog.FileName = -join ($([System.IO.Path]::GetFileNameWithoutExtension($DataTable.inputImageFullPath)), "(copy)")
         }
@@ -164,4 +170,38 @@ $Window.variables.xamlSaveButton.Add_Click({
     }
 })
 
-$Window.window.ShowDialog() | Out-Null
+function Display-ImagePreview {
+    $PreviewWindow = Initialize-XamlWindow $(Join-Path -Path $(Split-Path -Path "./PreviewWindow.xaml" -Parent -Resolve) -ChildPath "PreviewWindow.xaml") "Preview"
+
+    $bitmapImage = New-Object System.Windows.Media.Imaging.BitmapImage
+    $bitmapImage.BeginInit()
+    $bitmapImage.DecodePixelWidth = 500
+    $bitmapImage.UriSource = New-Object System.Uri($DataTable.outputImageTempPath)
+    $bitmapImage.EndInit()
+    $PreviewWindow.variables.xamlPreviewOutputImage.Source = $bitmapImage
+
+    $PreviewWindow.variables.xamlPreviewMenuPanel.Add_MouseDown({
+        $PreviewWindow.window.SizeToContent = "Manual"
+        $PreviewWindow.window.WindowState = "Normal"
+        $PreviewWindow.window.DragMove()
+    })
+
+    $PreviewWindow.variables.xamlPreviewMenuPanel.Add_MouseUp({
+        $PreviewWindow.window.WindowState = "Normal"
+        $PreviewWindow.window.SizeToContent = "WidthAndHeight"
+    })
+
+    $PreviewWindow.variables.xamlPreviewWindowControlClose.Add_Click({
+        $PreviewWindow.window.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+    })
+
+    $PreviewWindow.variables.xamlPreviewAboutLink.Add_Click({
+        [System.Diagnostics.Process]::Start($PreviewWindow.variables.xamlPreviewAboutLink.Header.substring(17))
+    })
+
+    $PreviewWindow.window.ShowDialog() | Out-Null
+    
+    return $Null
+}
+
+$MainWindow.window.ShowDialog() | Out-Null
