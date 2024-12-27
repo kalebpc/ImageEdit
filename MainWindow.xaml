@@ -19,7 +19,8 @@
                 </Menu>
                 <Menu DockPanel.Dock="Left" FontSize="15" Margin="0,15,0,0" VerticalAlignment="Center">
                     <MenuItem Header="File">
-                        <MenuItem x:Name="MenuWindowClose" Icon="×" Header="Close     Alt+F4" FontFamily="Segoe UI"/>
+                        <MenuItem x:Name="MenuConsecutiveChanges" Header="Consecutive Changes"/>
+                        <MenuItem x:Name="MenuWindowClose" Header="Close     Alt+F4"/>
                     </MenuItem>
                     <MenuItem Header="About">
                         <MenuItem Header="Title : ImageEdit">
