@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStyle="None"
         SizeToContent="WidthAndHeight"
-        Title="ImageEdit" MinHeight="400" MinWidth="550">
+        Title="ImageEdit" MinHeight="333" MinWidth="550">
     <Grid>
         <StackPanel Background="#FFF0F0F0">
             <DockPanel x:Name="MenuPanel" LastChildFill="False" Margin="0" Background="#FFE8E8E8">
@@ -35,7 +35,10 @@
                 </Menu>
             </DockPanel>
             <StackPanel Margin="15" Background="WhiteSmoke">
-                <Label Content="Choose Picture :" FontSize="15"/>
+                <DockPanel>
+                    <Label Content="Choose Picture :" FontSize="15"/>
+                    <Image x:Name="InputImage" Width="150" DockPanel.Dock="Right"/>
+                </DockPanel>
                 <DockPanel LastChildFill="False" Margin="15">
                     <TextBox x:Name="BrowseTextBox" Width="390" FontSize="15"/>
                     <Button x:Name="BrowseButton" Content="Browse" Height="30" Width="100" DockPanel.Dock="Right" FontSize="15"/>
@@ -49,10 +52,6 @@
                 </DockPanel>
                 <Slider x:Name="PixelSlider" Visibility="Collapsed" Margin="15"/>
                 <ComboBox x:Name="ColorComboBox" Visibility="Collapsed" Margin="15" FontSize="15"/>
-                <Separator Margin="15"/>
-                <DockPanel LastChildFill="False" Margin="15" HorizontalAlignment="Center">
-                    <Image x:Name="InputImage" Width="250"/>
-                </DockPanel>
                 <Separator Margin="15"/>
                 <DockPanel Margin="15" HorizontalAlignment="Center">
                     <Button x:Name="PreviewButton" Visibility="Collapsed" Height="30" Width="150" Margin="0,0,10,0" Content="Preview" FontSize="15"/>
