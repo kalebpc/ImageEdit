@@ -42,6 +42,14 @@ $MainWindow.variables.xamlMenuPanel.Add_MouseUp({
     $MainWindow.window.SizeToContent = "WidthAndHeight"
 })
 
+$MainWindow.variables.xamlMenuConsecutiveChanges.Add_Click({
+    If ($MainWindow.variables.xamlMenuConsecutiveChanges.Icon -ne "X") {
+        $MainWindow.variables.xamlMenuConsecutiveChanges.Icon = "X"
+    } Else {
+        $MainWindow.variables.xamlMenuConsecutiveChanges.Icon = ""
+    }    
+})
+
 $MainWindow.variables.xamlMenuWindowClose.Add_Click({
     $MainWindow.window.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
 })
@@ -124,8 +132,13 @@ $MainWindow.variables.xamlColorComboBox.Add_DropDownClosed({
 })
 
 $MainWindow.variables.xamlPreviewButton.Add_Click({
+    If ($MainWindow.variables.xamlMenuConsecutiveChanges.Icon -eq "X") {
+        $infile = $DataTable.outputImageTempPath
+    } Else {
+        $infile = $DataTable.inputImageFullPath
+    }
     If (Test-Path -Path $DataTable.outputImageTempPath) {
-        ./ImageEdit-amd64 $(-join ("infile", "=", '"', $($DataTable.inputImageFullPath), '"')) $(-join ("outfile", "=", '"', $($DataTable.outputImageTempPath), '"')) $(("function", $DataTable.chosenTransformation) -join "=") $(("pixels", $DataTable.pixels) -join "=")
+        ./ImageEdit-amd64 $(-join ("infile", "=", '"', $infile, '"')) $(-join ("outfile", "=", '"', $DataTable.outputImageTempPath, '"')) $(("function", $DataTable.chosenTransformation) -join "=") $(("pixels", $DataTable.pixels) -join "=")
         Invoke-Item $DataTable.outputImageTempPath
     }
 })
