@@ -1,6 +1,6 @@
 ![Go logo](https://go.dev/images/go-logo-blue.svg)
 
-# v0.1.0-alpha release
+# v0.2.0-alpha release
 
 ### - Powershell-driven WPF interface.
 
