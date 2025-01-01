@@ -1,6 +1,6 @@
-![Go logo](https://go.dev/images/go-logo-blue.svg)
+# ImageEdit
 
-# v0.2.0-alpha release
+# v0.1.0-alpha release
 
 ### - Powershell-driven WPF interface.
 
@@ -13,18 +13,16 @@
     - Prepend Target with "powershell.exe -executionpolicy bypass ".
     - Set Run to "Minimized" (optional).
 
----
+![PowershellWindow]
 
-# ImageEdit package
-![dino] ![dinoPIX]
-
----
+#
 
 # Cli User Interface
 
 ~~~
 C:\path\to\ImageEditfolder> go run main.go infile=./file/path outfile=./newfile/path ...
 ~~~
+
 ~~~
 C:\path\to\ImageEditfolder> go build
 C:\path\to\ImageEditfolder> ./ImageEdit --help
@@ -44,7 +42,8 @@ Arguments:
 Example:
       C:/user> ImageEdit infile=./filetoedit.png outfile=./newfilename.png function=Roundrobinrows pixels=50
 ~~~
----
+
+#
 
 # Function Example Results
 
@@ -70,7 +69,7 @@ Example:
 
   ![dinoPIX]
 
----
+#
 
 [dino]:./assets/dino.png
 [dinoFX]:./assets/flip/dinoFX.png
@@ -81,3 +80,4 @@ Example:
 [dinoRRC]:./assets/roundrobin/dinoRRC.png
 [dinoFXY]:./assets/flip/dinoFXY.png
 [dinoPIX]:./assets/pixelate/dinoPIX.png
+[PowershellWindow]:./assets/ImageEditPowershellWindow.png
